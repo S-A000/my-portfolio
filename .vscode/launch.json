@@ -1,20 +1,14 @@
 {
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch FastAPI Backend",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${workspaceFolder}/backend/main.py",
-            "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}/backend"
-        },
-        {
             "type": "chrome",
             "request": "launch",
-            "name": "Launch Vite Frontend",
-            "url": "http://localhost:5173",
-            "webRoot": "${workspaceFolder}/frontend"
+            "name": "Open index.html",
+            "file": "d:\\python projects\\protfolio\\index.html"
         }
     ]
 }
