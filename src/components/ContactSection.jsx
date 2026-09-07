@@ -1,0 +1,5 @@
+import { Download, Github, Linkedin, Mail, MapPin } from 'lucide-react'
+
+export default function ContactSection() {
+  return <section className="contact-section" id="contact" aria-labelledby="contact-title"><div className="contact-orb" aria-hidden="true" /><span className="eyebrow"><span className="signal" /> Available for the right opportunity</span><h2 id="contact-title">Let’s build something<br /><em>useful and intelligent.</em></h2><p>Open to AI/ML, MLOps, Data Engineering, AI Developer, Software Developer and research opportunities.</p><div className="contact-actions"><a className="button button--light" href="mailto:abinemasood814@gmail.com"><Mail /> Email me</a><a className="button button--glass" href="https://github.com/S-A000" target="_blank" rel="noopener noreferrer"><Github /> GitHub</a><a className="button button--glass" href="https://www.linkedin.com/in/abdullah-bin-masood-0b25103b4/" target="_blank" rel="noopener noreferrer"><Linkedin /> LinkedIn</a><a className="button button--ghost" href="/cv/Syed-Abdullah-Bin-Masood-CV.pdf" download><Download /> Download CV</a></div><p className="location"><MapPin /> Karachi, Pakistan</p></section>
+}

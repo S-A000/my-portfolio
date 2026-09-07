@@ -1,0 +1,4 @@
+export const experience = [
+  { role: 'AI/ML & MLOps Internship', company: '10Pearls', period: null, description: 'Built a production-oriented AQI forecasting system spanning live ingestion, machine learning, API serving, observability and dashboard visualization.', highlights: ['Modular ingestion, validation, preprocessing and prediction architecture', 'FastAPI service and Streamlit dashboard', 'Docker, metrics, logging, testing and deployment-oriented workflows'] },
+  { role: 'Junior Software Engineer', company: 'IoT Systems', period: '2 Months', description: 'Supported application development, testing, debugging and maintenance in a professional software delivery environment.', highlights: ['Troubleshot application issues with senior developers', 'Worked across testing, maintenance and SDLC practices', 'Collaborated on technical problem solving and software quality'] },
+]
