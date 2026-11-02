@@ -1,40 +1,98 @@
 import { useEffect, useState } from 'react'
-import { Download, Github, Linkedin, Menu, Search, X } from 'lucide-react'
+import { Github, Menu, X } from 'lucide-react'
+import samLogo from '../../SAM_Profile_1080_Black.png'
+import { brand, navigation } from '../data/agencyData'
 
-const links = ['Home', 'Skills', 'Experience', 'Projects', 'Education', 'Contact']
-
-export default function Navbar({ onSearch }) {
+export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
-  const [active, setActive] = useState('home')
-  const [open, setOpen] = useState(false)
+  const [activeSection, setActiveSection] = useState('home')
+  const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24)
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    const sections = links.map((link) => document.getElementById(link.toLowerCase())).filter(Boolean)
+    const handleScroll = () => setScrolled(window.scrollY > 18)
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+
+    const sections = navigation
+      .map(({ id }) => document.getElementById(id))
+      .filter(Boolean)
     const observer = new IntersectionObserver((entries) => {
-      const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
-      if (visible) setActive(visible.target.id)
-    }, { rootMargin: '-25% 0px -60%', threshold: [0.05, 0.25, 0.6] })
+      const visibleSection = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
+      if (visibleSection) setActiveSection(visibleSection.target.id)
+    }, { rootMargin: '-28% 0px -62%', threshold: [0.05, 0.25, 0.6] })
+
     sections.forEach((section) => observer.observe(section))
-    return () => { window.removeEventListener('scroll', onScroll); observer.disconnect() }
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      observer.disconnect()
+    }
   }, [])
 
-  const go = () => setOpen(false)
+  useEffect(() => {
+    if (!menuOpen) return undefined
+    const previousOverflow = document.body.style.overflow
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setMenuOpen(false)
+    }
+    document.body.style.overflow = 'hidden'
+    document.addEventListener('keydown', closeOnEscape)
+    return () => {
+      document.body.style.overflow = previousOverflow
+      document.removeEventListener('keydown', closeOnEscape)
+    }
+  }, [menuOpen])
+
+  const closeMenu = () => setMenuOpen(false)
+
   return (
-    <header className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`}>
-      <a href="#home" className="brand" aria-label="Syed Abdullah home"><span className="brand__mark">SAM</span><span className="brand__name">ABDULLAH</span></a>
-      <nav className={`navlinks ${open ? 'navlinks--open' : ''}`} aria-label="Primary navigation">
-        {links.map((link) => <a key={link} href={`#${link.toLowerCase()}`} onClick={go} className={active === link.toLowerCase() ? 'active' : ''}>{link}</a>)}
-        <a className="nav-cv" href="/cv/Syed-Abdullah-Bin-Masood-CV.pdf" download onClick={go}><Download size={16} /> Download CV</a>
+    <header className={`site-header${scrolled ? ' site-header--scrolled' : ''}`}>
+      <a className="site-header__brand" href="#home" aria-label={`${brand.name} home`} onClick={closeMenu}>
+        <span className="site-header__brand-mark">
+          <img src={samLogo} alt="" width="56" height="56" />
+        </span>
+        <span className="site-header__brand-name">{brand.name}</span>
+      </a>
+
+      <nav
+        id="primary-navigation"
+        className={`site-header__nav${menuOpen ? ' site-header__nav--open' : ''}`}
+        aria-label="Primary navigation"
+      >
+        {navigation.map(({ label, id }) => (
+          <a
+            key={id}
+            className={`site-header__nav-link${activeSection === id ? ' site-header__nav-link--active' : ''}`}
+            href={`#${id}`}
+            aria-current={activeSection === id ? 'location' : undefined}
+            onClick={closeMenu}
+          >
+            {label}
+          </a>
+        ))}
       </nav>
-      <div className="nav-actions">
-        <button className="icon-button" type="button" onClick={onSearch} aria-label="Search projects"><Search /></button>
-        <a className="icon-button desktop-social" href="https://github.com/S-A000" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile"><Github /></a>
-        <a className="icon-button desktop-social" href="https://www.linkedin.com/in/abdullah-bin-masood-0b25103b4/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile"><Linkedin /></a>
-        <button className="icon-button menu-button" type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-label={open ? 'Close menu' : 'Open menu'}>{open ? <X /> : <Menu />}</button>
-      </div>
+
+      <a
+        className="site-header__github"
+        href={brand.github}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="SAM Intelligence Group on GitHub"
+      >
+        <Github aria-hidden="true" />
+      </a>
+
+      <button
+        className="site-header__menu-toggle"
+        type="button"
+        aria-controls="primary-navigation"
+        aria-expanded={menuOpen}
+        aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+        onClick={() => setMenuOpen((isOpen) => !isOpen)}
+      >
+        {menuOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
+      </button>
     </header>
   )
 }

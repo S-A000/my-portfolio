@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">SAM Intelligence Group</title>
+  <desc id="desc">Enterprise AI, MLOps, Data Engineering and Cybersecurity</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#07090E"/>
+      <stop offset=".55" stop-color="#0A0F19"/>
+      <stop offset="1" stop-color="#10142B"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="185" y1="120" x2="950" y2="510" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#47DDF5"/>
+      <stop offset="1" stop-color="#8685FF"/>
+    </linearGradient>
+    <pattern id="grid" width="54" height="54" patternUnits="userSpaceOnUse">
+      <path d="M54 0H0V54" fill="none" stroke="#FFFFFF" stroke-opacity=".035"/>
+    </pattern>
+    <filter id="blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="55"/></filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <circle cx="1030" cy="150" r="190" fill="#47DDF5" fill-opacity=".11" filter="url(#blur)"/>
+  <circle cx="1010" cy="470" r="170" fill="#8685FF" fill-opacity=".12" filter="url(#blur)"/>
+  <circle cx="970" cy="315" r="205" fill="none" stroke="#47DDF5" stroke-opacity=".17"/>
+  <circle cx="970" cy="315" r="126" fill="none" stroke="#8685FF" stroke-opacity=".28"/>
+  <path d="M812 394h310" stroke="url(#accent)" stroke-opacity=".75"/>
+  <circle cx="835" cy="394" r="6" fill="#47DDF5"/>
+  <circle cx="932" cy="394" r="6" fill="#47DDF5"/>
+  <circle cx="1028" cy="394" r="6" fill="#8685FF"/>
+  <circle cx="1100" cy="394" r="6" fill="#45E3A6"/>
+  <rect x="74" y="70" width="58" height="58" rx="13" fill="#0E1925" stroke="#47DDF5" stroke-opacity=".42"/>
+  <text x="103" y="106" fill="#DDFBFF" font-family="Arial, sans-serif" font-size="15" font-weight="800" text-anchor="middle" letter-spacing="1">SAM</text>
+  <circle cx="126" cy="77" r="4" fill="#45E3A6"/>
+  <text x="151" y="94" fill="#F3F7FF" font-family="Arial, sans-serif" font-size="21" font-weight="700" letter-spacing="2">SAM INTELLIGENCE GROUP</text>
+  <text x="76" y="232" fill="#F4F8FF" font-family="Arial, sans-serif" font-size="70" font-weight="700" letter-spacing="-3">Engineering intelligence.</text>
+  <text x="76" y="313" fill="url(#accent)" font-family="Arial, sans-serif" font-size="70" font-weight="700" letter-spacing="-3">Hardening what matters.</text>
+  <text x="78" y="376" fill="#9EACBF" font-family="Arial, sans-serif" font-size="22">Enterprise AI · MLOps · Data Engineering · Cyber Defense</text>
+  <line x1="76" y1="442" x2="716" y2="442" stroke="#FFFFFF" stroke-opacity=".11"/>
+  <text x="78" y="486" fill="#47DDF5" font-family="Consolas, monospace" font-size="15" font-weight="700" letter-spacing="2">PRODUCTION-GRADE ARCHITECTURES</text>
+  <text x="78" y="528" fill="#8190A5" font-family="Consolas, monospace" font-size="14" letter-spacing="1">AUTONOMOUS INTELLIGENCE / RESILIENT DATA / NEXT-GEN DEFENSE</text>
+  <rect x="1" y="1" width="1198" height="628" rx="1" fill="none" stroke="#FFFFFF" stroke-opacity=".07"/>
+</svg>

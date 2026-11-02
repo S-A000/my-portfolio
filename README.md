@@ -1,54 +1,57 @@
-# Syed Abdullah Bin Masood — Portfolio
+# SAM Intelligence Group — Enterprise Website
 
-A production-ready, static portfolio for an AI/ML developer. The experience uses a cinematic browsing pattern with horizontal project rows, accessible project-detail dialogs, client-side search, verified links and locally stored artwork.
+The official front-end for SAM Intelligence Group, a specialized enterprise software, artificial intelligence, MLOps, data engineering, and cybersecurity practice.
+
+The experience is a responsive, accessible Vite/React site with a warm studio-glass interface, a procedural three-stage neural-field canvas, data-driven services, a unified filterable project library, a categorized infrastructure stack, founder leadership, and a transparent project-discovery email handoff.
 
 ## Tech stack
 
-- React and Vite
-- JavaScript and modern CSS
+- React 19 and Vite 7
+- JavaScript with JSDoc-typed agency data
 - Framer Motion
 - Lucide React
+- Modern responsive CSS
 - Vitest and React Testing Library
 - ESLint
 
-No backend, database, environment variables or runtime GitHub API access is required.
+No backend, database, runtime API, or environment variables are required. The project-intake form prepares a prefilled message in the visitor's local email application and explicitly discloses that behavior.
 
 ## Setup
 
 ```bash
-npm ci
-npm run dev
+pnpm install
+pnpm dev
 ```
 
-Vite prints the local address after startup.
+Vite prints the local preview address after startup.
 
 ## Quality checks
 
 ```bash
-npm run lint
-npm test -- --run
-npm run build
+pnpm run lint
+pnpm test -- --run
+pnpm run build
 ```
 
 The production output is written to `dist/`.
 
-## Deploy to Vercel
+## Content architecture
 
-1. Import this repository into Vercel.
-2. Keep the detected build command as `npm run build`.
-3. Keep the output directory as `dist`.
-4. Deploy. No environment variables are needed.
+Public agency content is centralized in `src/data/agencyData.js`, while the preserved portfolio inventory lives in `src/data/projectsData.js`:
 
-`vercel.json` includes an SPA fallback so project query URLs continue to work after a direct reload.
+- Brand, contact channels, and navigation
+- Trust metrics and engineering pillars
+- Unified past-project narratives, gallery media, and verified links
+- Technology groups
+- Leadership profile
+- Project-intake service options
 
-## Updating content
+UI sections consume this configuration directly, keeping content changes separate from layout logic.
 
-- Edit project content and verified links in `src/data/projects.js`.
-- Edit skill groups in `src/data/skills.js`.
-- Edit professional experience in `src/data/experience.js`.
-- Replace the downloadable CV at `public/cv/Syed-Abdullah-Bin-Masood-CV.pdf` while keeping the filename stable.
-- Add or replace project artwork in `public/projects/`, then update the relevant `image`, `alt` and `gallery` entries in the project data.
+## Deployment
 
-## Accessibility and interaction
+`vercel.json` contains the SPA fallback required for direct navigation. On Vercel, use `pnpm run build` and publish `dist/`.
 
-Cards support mouse, touch and keyboard activation. The project dialog closes by button, backdrop or Escape, traps focus while open and restores focus after closing. Motion is reduced when the operating system requests it. All external links open safely with `noopener noreferrer`.
+## Accessibility
+
+The site includes skip navigation, semantic heading structure, visible focus treatment, explicit form labels, keyboard-accessible case-study filters and mobile navigation, text-backed operational indicators, reduced-motion support, forced-color fallbacks, and opaque fallbacks for browsers without backdrop blur.

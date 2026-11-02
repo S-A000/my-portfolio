@@ -1,77 +1,75 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import App from '../src/App'
-import ProjectCard from '../src/components/ProjectCard'
-import ProjectModal from '../src/components/ProjectModal'
-import ProjectRow from '../src/components/ProjectRow'
-import SearchOverlay from '../src/components/SearchOverlay'
-import { projects } from '../src/data/projects'
+import { caseStudies, flagshipProducts, servicePillars, technologyGroups } from '../src/data/agencyData'
 
-describe('portfolio', () => {
-  it('renders projects from the central data file', () => {
+describe('SAM Intelligence Group website', () => {
+  it('renders the enterprise brand and core navigation', () => {
     render(<App />)
-    projects.forEach((project) => expect(screen.getAllByText(project.title).length).toBeGreaterThan(0))
+    expect(screen.getAllByText('SAM Intelligence Group').length).toBeGreaterThan(0)
+    const primaryNavigation = within(screen.getByRole('navigation', { name: 'Primary navigation' }))
+    expect(primaryNavigation.getByRole('link', { name: 'Services' })).toHaveAttribute('href', '#services')
+    expect(primaryNavigation.getByRole('link', { name: 'Flagship Products' })).toHaveAttribute('href', '#products')
+    expect(primaryNavigation.getByRole('link', { name: 'Book a Consultation' })).toHaveAttribute('href', '#contact')
   })
 
-  it('renders a project row from supplied data', () => {
-    render(<ProjectRow name="Test Row" projects={projects.slice(0, 2)} onOpen={vi.fn()} />)
-    expect(screen.getByRole('heading', { name: 'Test Row' })).toBeInTheDocument()
-    expect(screen.getAllByText('DeepGuard').length).toBeGreaterThan(0)
-  })
-
-  it('filters projects instantly in search', async () => {
-    render(<SearchOverlay open onClose={vi.fn()} onOpenProject={vi.fn()} />)
-    await userEvent.type(screen.getByPlaceholderText(/search projects/i), 'MediaPipe')
-    expect(screen.getAllByText('PalmPilot').length).toBeGreaterThan(0)
-    expect(screen.queryByText('DeepGuard')).not.toBeInTheDocument()
-  })
-
-  it('shows an empty search state', async () => {
-    render(<SearchOverlay open onClose={vi.fn()} onOpenProject={vi.fn()} />)
-    await userEvent.type(screen.getByPlaceholderText(/search projects/i), 'no-such-project-123')
-    expect(screen.getByRole('heading', { name: 'No projects found' })).toBeInTheDocument()
-  })
-
-  it('opens a project modal from a card click', async () => {
-    const onOpen = vi.fn()
-    render(<ProjectCard project={projects[1]} onOpen={onOpen} />)
-    await userEvent.click(screen.getByRole('button', { name: /open details for deepguard/i }))
-    expect(onOpen).toHaveBeenCalledWith(projects[1], expect.anything())
-  })
-
-  it('opens project cards with the keyboard', () => {
-    const onOpen = vi.fn()
-    render(<ProjectCard project={projects[1]} onOpen={onOpen} />)
-    fireEvent.keyDown(screen.getByRole('button', { name: /open details for deepguard/i }), { key: 'Enter' })
-    expect(onOpen).toHaveBeenCalledTimes(1)
-  })
-
-  it('closes the modal with its close button', async () => {
-    const onClose = vi.fn()
-    render(<ProjectModal project={projects[0]} onClose={onClose} />)
-    await userEvent.click(screen.getByRole('button', { name: /close project details/i }))
-    expect(onClose).toHaveBeenCalledTimes(1)
-  })
-
-  it('closes the modal with Escape', () => {
-    const onClose = vi.fn()
-    render(<ProjectModal project={projects[0]} onClose={onClose} />)
-    fireEvent.keyDown(document, { key: 'Escape' })
-    expect(onClose).toHaveBeenCalledTimes(1)
-  })
-
-  it('provides the real downloadable CV link', () => {
+  it('renders every service pillar from the central agency data', () => {
     render(<App />)
-    const links = screen.getAllByRole('link', { name: /download cv/i })
-    expect(links[0]).toHaveAttribute('href', '/cv/Syed-Abdullah-Bin-Masood-CV.pdf')
-    expect(links[0]).toHaveAttribute('download')
+    servicePillars.forEach((pillar) => {
+      expect(screen.getByRole('heading', { name: pillar.title })).toBeInTheDocument()
+    })
   })
 
-  it('only renders source buttons for verified URLs', () => {
-    const { rerender } = render(<ProjectCard project={projects.find((project) => project.id === 'intelligent-data-agent')} onOpen={vi.fn()} />)
-    expect(screen.queryByLabelText(/open intelligent data agent on/i)).not.toBeInTheDocument()
-    rerender(<ProjectCard project={projects.find((project) => project.id === 'deepguard')} onOpen={vi.fn()} />)
-    expect(screen.getByLabelText(/open deepguard on github/i)).toHaveAttribute('href', 'https://github.com/S-A000/deepguard')
+  it('renders both flagship products and only verified product links', () => {
+    render(<App />)
+    flagshipProducts.forEach((product) => {
+      expect(screen.getByRole('heading', { name: product.name })).toBeInTheDocument()
+    })
+    expect(screen.queryByRole('link', { name: /repository for botshield/i })).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /view repository for deepguard/i })).toHaveAttribute('href', 'https://github.com/S-A000/deepguard')
+  })
+
+  it('filters case studies by engineering domain', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: 'MLOps & Data' }))
+    expect(screen.getByRole('heading', { name: 'sam-eda' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'SmartPark-Vision' })).not.toBeInTheDocument()
+    expect(screen.getByText('3 case studies shown')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Computer Vision & AI' }))
+    expect(screen.getByRole('heading', { name: 'SmartPark-Vision' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'PalmPilot' })).toBeInTheDocument()
+  })
+
+  it('renders all case studies by default', () => {
+    render(<App />)
+    caseStudies.forEach((study) => expect(screen.getByRole('heading', { name: study.title })).toBeInTheDocument())
+    expect(screen.getByText(`${caseStudies.length} case studies shown`)).toBeInTheDocument()
+  })
+
+  it('renders the categorized technology matrix without skill percentages', () => {
+    render(<App />)
+    technologyGroups.forEach((group) => expect(screen.getByRole('heading', { name: group.label })).toBeInTheDocument())
+    expect(screen.queryByText(/90%/)).not.toBeInTheDocument()
+  })
+
+  it('provides the complete project discovery intake form', () => {
+    render(<App />)
+    expect(screen.getByLabelText('Name')).toBeRequired()
+    expect(screen.getByLabelText('Company / Organization')).toBeRequired()
+    expect(screen.getByLabelText('Work Email')).toHaveAttribute('type', 'email')
+    expect(screen.getByLabelText('Service Required')).toBeRequired()
+    expect(screen.getByLabelText('Project Scope / Architecture Needs')).toBeRequired()
+    expect(screen.getByRole('option', { name: 'Cybersecurity / BotShield' })).toBeInTheDocument()
+  })
+
+  it('removes personal portfolio and CV language', () => {
+    render(<App />)
+    expect(screen.queryByText(/download cv/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/open to opportunities/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/more about me/i)).not.toBeInTheDocument()
   })
 })
