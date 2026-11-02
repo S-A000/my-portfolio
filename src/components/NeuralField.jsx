@@ -2,7 +2,9 @@ import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-const STRAND_COUNT = 160
+// The canvas version uses one cubic curve per strand, so strand count is its
+// equivalent of tube/radial segment complexity.
+const STRAND_COUNT = 96
 const TAU = Math.PI * 2
 const WAVE_STAGE = 0.5
 
@@ -130,6 +132,7 @@ const resolvePath = (strand, width, height, time, progress) => {
 export default function NeuralField() {
   const fieldRef = useRef(null)
   const canvasRef = useRef(null)
+  const scrollProgressRef = useRef({ progress: 0 })
 
   useEffect(() => {
     const field = fieldRef.current
@@ -138,6 +141,34 @@ export default function NeuralField() {
 
     const context = canvas.getContext('2d', { alpha: true })
     if (!context) return undefined
+
+    const createRadialSprite = (colorStops) => {
+      const sprite = document.createElement('canvas')
+      const spriteSize = 128
+      sprite.width = spriteSize
+      sprite.height = spriteSize
+      const spriteContext = sprite.getContext('2d')
+      if (!spriteContext) return sprite
+
+      const center = spriteSize / 2
+      const gradient = spriteContext.createRadialGradient(center, center, 0, center, center, center)
+      colorStops.forEach(([offset, color]) => gradient.addColorStop(offset, color))
+      spriteContext.fillStyle = gradient
+      spriteContext.fillRect(0, 0, spriteSize, spriteSize)
+      return sprite
+    }
+
+    const glowSprite = createRadialSprite([
+      [0, 'rgba(255, 236, 176, 1)'],
+      [0.16, 'rgba(255, 157, 48, 0.92)'],
+      [0.48, 'rgba(255, 118, 20, 0.3)'],
+      [1, 'rgba(255, 118, 20, 0)'],
+    ])
+    const shadowSprite = createRadialSprite([
+      [0, 'rgba(70, 43, 23, 0.24)'],
+      [0.45, 'rgba(108, 68, 31, 0.1)'],
+      [1, 'rgba(108, 68, 31, 0)'],
+    ])
 
     gsap.registerPlugin(ScrollTrigger)
 
@@ -148,30 +179,28 @@ export default function NeuralField() {
     let width = 0
     let height = 0
     let pixelRatio = 1
-    let targetProgress = 0
     let displayProgress = 0
     let animationFrame = 0
     let reducedFrame = 0
     let previousTime = performance.now()
     let pageScrollTrigger = null
+    let pageScrollTween = null
 
     const drawContactShadow = (progress) => {
       const irisAmount = smoothstep((progress - WAVE_STAGE) / (1 - WAVE_STAGE))
+      if (irisAmount <= 0) return
       const centerX = mix(width * 0.66, irisGeometry(width, height).centerX, irisAmount)
       const centerY = mix(height * 0.87, height * 0.82, irisAmount)
       const radius = Math.min(width * 0.27, height * 0.3)
-      const shadow = context.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius)
-      shadow.addColorStop(0, 'rgba(70, 43, 23, 0.2)')
-      shadow.addColorStop(0.42, 'rgba(108, 68, 31, 0.09)')
-      shadow.addColorStop(1, 'rgba(108, 68, 31, 0)')
       context.save()
-      context.translate(centerX, centerY)
-      context.scale(1, 0.19)
-      context.translate(-centerX, -centerY)
-      context.fillStyle = shadow
-      context.beginPath()
-      context.arc(centerX, centerY, radius, 0, TAU)
-      context.fill()
+      context.globalAlpha = irisAmount
+      context.drawImage(
+        shadowSprite,
+        centerX - radius,
+        centerY - radius * 0.19,
+        radius * 2,
+        radius * 0.38,
+      )
       context.restore()
     }
 
@@ -201,12 +230,19 @@ export default function NeuralField() {
 
       context.save()
       context.globalCompositeOperation = 'lighter'
-      context.shadowColor = 'rgba(255, 141, 31, 0.88)'
-      context.shadowBlur = 11
       STRANDS.forEach((strand, index) => {
         const tip = paths[index]
         const pulse = reducedMotion ? 1 : 0.82 + Math.sin(time * 1.35 + strand.phase) * 0.18
         const radius = strand.tipSize * pulse
+        const glowSize = Math.max(9, radius * 9)
+
+        context.drawImage(
+          glowSprite,
+          tip.x1 - glowSize / 2,
+          tip.y1 - glowSize / 2,
+          glowSize,
+          glowSize,
+        )
 
         context.fillStyle = 'rgba(255, 151, 43, 0.86)'
         context.beginPath()
@@ -218,17 +254,13 @@ export default function NeuralField() {
         context.arc(tip.x1, tip.y1, Math.max(0.45, radius * 0.38), 0, TAU)
         context.fill()
 
-        for (let particle = 0; particle < 2; particle += 1) {
-          const direction = particle === 0 ? 1 : -1
-          const orbitAngle = strand.particlePhase + direction * time * (0.44 + particle * 0.17)
-          const orbit = strand.orbit * (particle === 0 ? 1 : 1.55)
-          const particleX = tip.x1 + Math.cos(orbitAngle) * orbit
-          const particleY = tip.y1 + Math.sin(orbitAngle) * orbit * 0.68
-          context.globalAlpha = particle === 0 ? 0.48 : 0.27
-          context.beginPath()
-          context.arc(particleX, particleY, particle === 0 ? 0.72 : 0.48, 0, TAU)
-          context.fill()
-        }
+        const orbitAngle = strand.particlePhase + time * 0.44
+        const particleX = tip.x1 + Math.cos(orbitAngle) * strand.orbit
+        const particleY = tip.y1 + Math.sin(orbitAngle) * strand.orbit * 0.68
+        context.globalAlpha = 0.42
+        context.beginPath()
+        context.arc(particleX, particleY, 0.65, 0, TAU)
+        context.fill()
         context.globalAlpha = 1
       })
       context.restore()
@@ -238,7 +270,7 @@ export default function NeuralField() {
     const resize = () => {
       width = Math.max(1, Math.round(window.innerWidth))
       height = Math.max(1, Math.round(window.innerHeight))
-      pixelRatio = Math.min(window.devicePixelRatio || 1, 2)
+      pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5)
       canvas.width = Math.round(width * pixelRatio)
       canvas.height = Math.round(height * pixelRatio)
       canvas.style.width = `${width}px`
@@ -261,6 +293,7 @@ export default function NeuralField() {
       const elapsed = Math.min(64, now - previousTime)
       previousTime = now
       const smoothing = 1 - Math.pow(0.001, elapsed / 1000)
+      const targetProgress = clamp(scrollProgressRef.current.progress)
       displayProgress += (targetProgress - displayProgress) * smoothing
       if (Math.abs(targetProgress - displayProgress) < 0.0001) displayProgress = targetProgress
       draw(now)
@@ -272,7 +305,7 @@ export default function NeuralField() {
       animationFrame = 0
       previousTime = performance.now()
       if (reducedMotion) {
-        displayProgress = targetProgress
+        displayProgress = clamp(scrollProgressRef.current.progress)
         draw(previousTime)
       } else {
         animationFrame = window.requestAnimationFrame(animate)
@@ -281,7 +314,9 @@ export default function NeuralField() {
 
     const onMotionPreferenceChange = (event) => {
       reducedMotion = event.matches
-      targetProgress = clamp(pageScrollTrigger?.progress ?? targetProgress)
+      scrollProgressRef.current.progress = clamp(
+        pageScrollTrigger?.progress ?? scrollProgressRef.current.progress,
+      )
       startAnimation()
     }
 
@@ -295,31 +330,43 @@ export default function NeuralField() {
     else motionQuery.addListener(onMotionPreferenceChange)
 
     resize()
-    pageScrollTrigger = ScrollTrigger.create({
-      trigger: document.body,
-      start: 'top top',
-      end: 'bottom bottom',
-      invalidateOnRefresh: true,
-      onUpdate: (self) => {
-        targetProgress = clamp(self.progress)
-        if (reducedMotion) displayProgress = targetProgress
-        requestReducedDraw()
-      },
-      onRefresh: (self) => {
-        targetProgress = clamp(self.progress)
-        if (reducedMotion) displayProgress = targetProgress
-        requestReducedDraw()
+    scrollProgressRef.current.progress = 0
+    pageScrollTween = gsap.to(scrollProgressRef.current, {
+      progress: 1,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: document.body,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: 1,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          if (reducedMotion) {
+            scrollProgressRef.current.progress = clamp(self.progress)
+            displayProgress = scrollProgressRef.current.progress
+          }
+          requestReducedDraw()
+        },
+        onRefresh: (self) => {
+          if (reducedMotion) {
+            scrollProgressRef.current.progress = clamp(self.progress)
+            displayProgress = scrollProgressRef.current.progress
+          }
+          requestReducedDraw()
+        },
       },
     })
+    pageScrollTrigger = pageScrollTween.scrollTrigger
     ScrollTrigger.refresh()
-    targetProgress = clamp(pageScrollTrigger.progress)
-    displayProgress = targetProgress
+    scrollProgressRef.current.progress = clamp(pageScrollTrigger.progress)
+    displayProgress = scrollProgressRef.current.progress
     startAnimation()
 
     return () => {
       window.cancelAnimationFrame(animationFrame)
       window.cancelAnimationFrame(reducedFrame)
       pageScrollTrigger?.kill()
+      pageScrollTween?.kill()
       resizeObserver?.disconnect()
       window.removeEventListener('resize', resize)
       if (motionQuery.removeEventListener) motionQuery.removeEventListener('change', onMotionPreferenceChange)
