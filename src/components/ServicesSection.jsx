@@ -1,4 +1,4 @@
-import { BrainCircuit, Check, Code2, Database, ServerCog, ShieldCheck } from 'lucide-react'
+import { BrainCircuit, Code2, Database, ServerCog, ShieldCheck } from 'lucide-react'
 import { servicePillars } from '../data/agencyData'
 
 const pillarIcons = {
@@ -13,11 +13,11 @@ export default function ServicesSection() {
   return (
     <section className="services content-section" id="services" aria-labelledby="services-title">
       <header className="services__heading section-heading">
-        <span>Core engineering pillars</span>
-        <h2 id="services-title">Systems engineered for production, scale, and resilience.</h2>
+        <span>What we do</span>
+        <h2 id="services-title">Integrated technology services for modern enterprises.</h2>
         <p>
-          Five integrated practices move complex initiatives from architecture through secure,
-          observable delivery.
+          From strategic foundations to production delivery, our teams solve complex technology
+          challenges with clarity, rigor, and measurable business focus.
         </p>
       </header>
 
@@ -38,27 +38,10 @@ export default function ServicesSection() {
 
                 <h3 id={titleId}>{pillar.title}</h3>
                 <p className="services__summary">{pillar.executiveSummary}</p>
-
-                <div className="services__focus">
-                  <span>Engineering focus</span>
-                  <p>{pillar.focus}</p>
-                </div>
-
-                <div className="services__deliverables">
-                  <h4>Core deliverables</h4>
-                  <ul>
-                    {pillar.deliverables.map((deliverable) => (
-                      <li key={deliverable}>
-                        <Check aria-hidden="true" />
-                        <span>{deliverable}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <ul className="services__stack" aria-label={`${pillar.title} technology stack`}>
-                  {pillar.stack.map((technology) => <li key={technology}>{technology}</li>)}
-                </ul>
+                <a className="services__link" href="#contact">
+                  Learn more <span aria-hidden="true">→</span>
+                </a>
+                <div className="services__wave" aria-hidden="true"><span /><i /></div>
               </article>
             </li>
           )

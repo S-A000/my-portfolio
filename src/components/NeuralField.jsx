@@ -1,19 +1,18 @@
-import { useEffect, useRef } from 'react'
-import { gsap } from 'gsap'
+import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
+import { createPortal } from 'react-dom'
+import { Canvas, useFrame } from '@react-three/fiber'
+import { useReducedMotion } from 'framer-motion'
+import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import * as THREE from 'three'
 
-// The canvas version uses one cubic curve per strand, so strand count is its
-// equivalent of tube/radial segment complexity.
-const STRAND_COUNT = 96
-const TAU = Math.PI * 2
-const WAVE_STAGE = 0.5
+if (typeof window !== 'undefined') gsap.registerPlugin(ScrollTrigger)
 
-const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value))
-const mix = (from, to, amount) => from + (to - from) * amount
-const smoothstep = (value) => {
-  const amount = clamp(value)
-  return amount * amount * (3 - 2 * amount)
-}
+const STRAND_COUNT = 200
+const TUBULAR_SEGMENTS = 28
+const RADIAL_SEGMENTS = 4
+const STRAND_RADIUS = 0.014
+const SPARKS_PER_TIP = 2
 
 const createRandom = (initialSeed) => {
   let seed = initialSeed >>> 0
@@ -27,364 +26,436 @@ const random = createRandom(0x5a17c9e3)
 const STRANDS = Array.from({ length: STRAND_COUNT }, (_, index) => ({
   index,
   lane: index / (STRAND_COUNT - 1) * 2 - 1,
-  angle: index / STRAND_COUNT * TAU + (random() - 0.5) * 0.045,
-  phase: random() * TAU,
+  theta: index / STRAND_COUNT * Math.PI * 2,
+  phase: random() * Math.PI * 2,
   bend: random() * 2 - 1,
-  length: 0.72 + random() * 0.28,
-  width: 0.45 + random() * 1.05,
-  tipSize: 0.9 + random() * 1.55,
-  orbit: 3 + random() * 7,
-  particlePhase: random() * TAU,
+  depth: random() * 2 - 1,
+  length: random() * 2 - 1,
+  jitter: random() * 2 - 1,
 }))
 
-const pathKeys = ['x0', 'y0', 'c1x', 'c1y', 'c2x', 'c2y', 'x1', 'y1']
+const curveFrom = (points) => new THREE.CatmullRomCurve3(
+  points.map(([x, y, z]) => new THREE.Vector3(x, y, z)),
+  false,
+  'catmullrom',
+  0.56,
+)
 
-const interpolatePath = (from, to, amount) => {
-  const path = {}
-  pathKeys.forEach((key) => { path[key] = mix(from[key], to[key], amount) })
-  return path
-}
+const createStageCurve = (stage, strand) => {
+  const { bend, depth, index, jitter, lane, length, phase, theta } = strand
 
-const bundlePath = (strand, width, height, time) => {
-  const compact = width < 720
-  const centerX = width * (compact ? 0.56 : 0.66)
-  const lane = strand.lane
-  const sway = Math.sin(time * 0.52 + strand.phase)
-  const crossSway = Math.sin(time * 0.31 + strand.phase * 1.7)
-  const drop = 0.58 + (0.5 + 0.5 * Math.sin(strand.phase * 1.9)) * 0.26
-
-  return {
-    x0: centerX + lane * width * 0.105 + sway * width * 0.008,
-    y0: -height * (0.08 + (1 - strand.length) * 0.3),
-    c1x: centerX + strand.bend * width * 0.075 + lane * width * 0.035 + sway * width * 0.018,
-    c1y: height * (0.14 + strand.length * 0.06),
-    c2x: centerX + lane * width * 0.16 - strand.bend * width * 0.04 + crossSway * width * 0.024,
-    c2y: height * (0.39 + strand.length * 0.12),
-    x1: centerX + lane * width * (compact ? 0.31 : 0.255) + sway * width * 0.026,
-    y1: height * drop + crossSway * height * 0.018,
-  }
-}
-
-const wavePath = (strand, width, height, time) => {
-  const lane = strand.lane
-  const ripple = Math.sin(strand.phase + time * 0.62)
-  const laneWave = Math.sin((lane + 1) * Math.PI * 1.35 + time * 0.28)
-
-  return {
-    x0: width * (0.12 + (lane + 1) * 0.045),
-    y0: height * (0.78 - lane * 0.19 + ripple * 0.018),
-    c1x: width * (0.35 + strand.bend * 0.04),
-    c1y: height * (0.72 - lane * 0.25 + laneWave * 0.07),
-    c2x: width * (0.64 + strand.bend * 0.055),
-    c2y: height * (0.36 + lane * 0.24 - laneWave * 0.06),
-    x1: width * (0.88 + lane * 0.075),
-    y1: height * (0.26 + lane * 0.29 + ripple * 0.025),
-  }
-}
-
-const irisGeometry = (width, height) => {
-  const compact = width < 720
-  const centerX = width * (compact ? 0.53 : 0.64)
-  const centerY = height * 0.49
-  const size = Math.min(width, height)
-  return {
-    centerX,
-    centerY,
-    innerRadius: size * (compact ? 0.155 : 0.18),
-    outerRadius: size * (compact ? 0.35 : 0.39),
-  }
-}
-
-const irisPath = (strand, width, height, time) => {
-  const { centerX, centerY, innerRadius, outerRadius } = irisGeometry(width, height)
-  const angle = strand.angle + Math.sin(time * 0.24 + strand.phase) * 0.012
-  const tangentX = -Math.sin(angle)
-  const tangentY = Math.cos(angle)
-  const radialX = Math.cos(angle)
-  const radialY = Math.sin(angle)
-  const outer = outerRadius * (0.93 + strand.length * 0.09)
-  const inner = innerRadius * (0.96 + strand.bend * 0.035)
-  const curl = strand.bend * outerRadius * 0.16
-
-  return {
-    x0: centerX + radialX * outer + tangentX * curl,
-    y0: centerY + radialY * outer + tangentY * curl,
-    c1x: centerX + radialX * outerRadius * 0.79 + tangentX * (curl + outerRadius * 0.08),
-    c1y: centerY + radialY * outerRadius * 0.79 + tangentY * (curl + outerRadius * 0.08),
-    c2x: centerX + radialX * innerRadius * 1.42 + tangentX * outerRadius * 0.035,
-    c2y: centerY + radialY * innerRadius * 1.42 + tangentY * outerRadius * 0.035,
-    x1: centerX + radialX * inner,
-    y1: centerY + radialY * inner,
-  }
-}
-
-const resolvePath = (strand, width, height, time, progress) => {
-  const bundle = bundlePath(strand, width, height, time)
-  const wave = wavePath(strand, width, height, time)
-  if (progress <= WAVE_STAGE) {
-    return interpolatePath(bundle, wave, smoothstep(progress / WAVE_STAGE))
+  if (stage === 0) {
+    return curveFrom([
+      [lane * 0.72 + jitter * 0.08, 5.15, depth * 0.18],
+      [lane * 0.86 + Math.sin(phase) * 0.12, 4.05, depth * 0.24],
+      [lane * 1.08 + bend * 0.18, 2.7, depth * 0.34],
+      [lane * 1.34 - bend * 0.2, 1.15, depth * 0.46],
+      [lane * 1.62 + Math.sin(phase * 1.4) * 0.2, -0.35, depth * 0.56],
+      [lane * 1.9 + jitter * 0.18, -2.35 + length * 0.32, depth * 0.66],
+    ])
   }
 
-  const iris = irisPath(strand, width, height, time)
-  return interpolatePath(wave, iris, smoothstep((progress - WAVE_STAGE) / (1 - WAVE_STAGE)))
+  if (stage === 1) {
+    const arcAngle = index / (STRAND_COUNT - 1) * Math.PI
+    const tipX = Math.cos(arcAngle) * 3.75
+    const tipY = -0.48 + Math.sin(arcAngle) * 3.5
+    const tipZ = depth * 0.3
+
+    return curveFrom([
+      [-4.35 + lane * 0.28, -3.15 + lane * 0.22, depth * 0.38],
+      [-3.15 + lane * 0.36, -2.42 + lane * 0.2, depth * 0.34],
+      [-1.95 + lane * 0.28, -1.62 + lane * 0.16, depth * 0.28],
+      [-0.82 + tipX * 0.24, -0.88 + tipY * 0.18, depth * 0.22],
+      [tipX * 0.72, -0.42 + tipY * 0.7, tipZ * 0.72],
+      [tipX, tipY, tipZ],
+    ])
+  }
+
+  if (stage === 2) {
+    const centerX = 0.2
+    const radii = [3.62, 3.15, 2.75, 2.3, 1.88, 1.46]
+    return curveFrom(radii.map((radius, pointIndex) => {
+      const u = pointIndex / (radii.length - 1)
+      const angle = theta + (1 - u) * (0.48 + bend * 0.065) + Math.sin(u * Math.PI) * bend * 0.045
+      return [
+        centerX + Math.cos(angle) * radius,
+        Math.sin(angle) * radius,
+        Math.sin(theta * 3 + u * Math.PI) * 0.075 + depth * 0.035,
+      ]
+    }))
+  }
+
+  const tipX = 1.18 + lane * 0.72 + jitter * 0.08
+  const tipY = -0.28 + Math.sin(phase) * 0.22 + lane * 0.12
+  const tipZ = depth * 0.48
+  return curveFrom([
+    [-5.25 + lane * 0.5, 4.7 + lane * 0.42, depth * 0.22],
+    [-4.15 + lane * 0.64, 3.65 + lane * 0.34, depth * 0.26],
+    [-2.95 + lane * 0.72, 2.65 + lane * 0.28, depth * 0.3],
+    [-1.5 + lane * 0.74 + bend * 0.08, 1.5 + lane * 0.22, depth * 0.36],
+    [-0.05 + lane * 0.72, 0.42 + lane * 0.16, depth * 0.42],
+    [tipX, tipY, tipZ],
+  ])
 }
 
-export default function NeuralField() {
-  const fieldRef = useRef(null)
-  const canvasRef = useRef(null)
-  const scrollProgressRef = useRef({ progress: 0 })
+const createFiberData = () => {
+  const sample = new THREE.TubeGeometry(
+    createStageCurve(0, STRANDS[0]),
+    TUBULAR_SEGMENTS,
+    STRAND_RADIUS,
+    RADIAL_SEGMENTS,
+    false,
+  )
+  const verticesPerStrand = sample.attributes.position.count
+  const indicesPerStrand = sample.index.count
+  const totalVertices = verticesPerStrand * STRAND_COUNT
+  const stagePositions = Array.from({ length: 4 }, () => new Float32Array(totalVertices * 3))
+  const stageNormals = Array.from({ length: 4 }, () => new Float32Array(totalVertices * 3))
+  const stageTips = Array.from({ length: 4 }, () => new Float32Array(STRAND_COUNT * 3))
+  const indices = new Uint16Array(indicesPerStrand * STRAND_COUNT)
+  sample.dispose()
+
+  STRANDS.forEach((strand) => {
+    const vertexOffset = strand.index * verticesPerStrand
+    const floatOffset = vertexOffset * 3
+    const indexOffset = strand.index * indicesPerStrand
+
+    for (let stage = 0; stage < 4; stage += 1) {
+      const curve = createStageCurve(stage, strand)
+      const tube = new THREE.TubeGeometry(
+        curve,
+        TUBULAR_SEGMENTS,
+        STRAND_RADIUS,
+        RADIAL_SEGMENTS,
+        false,
+      )
+      stagePositions[stage].set(tube.attributes.position.array, floatOffset)
+      stageNormals[stage].set(tube.attributes.normal.array, floatOffset)
+      curve.getPoint(1).toArray(stageTips[stage], strand.index * 3)
+
+      if (stage === 0) {
+        for (let item = 0; item < indicesPerStrand; item += 1) {
+          indices[indexOffset + item] = tube.index.array[item] + vertexOffset
+        }
+      }
+      tube.dispose()
+    }
+  })
+
+  const positions = new Float32Array(stagePositions[0])
+  const normals = new Float32Array(stageNormals[0])
+  const positionAttribute = new THREE.BufferAttribute(positions, 3)
+  const normalAttribute = new THREE.BufferAttribute(normals, 3)
+  positionAttribute.setUsage(THREE.DynamicDrawUsage)
+  normalAttribute.setUsage(THREE.DynamicDrawUsage)
+
+  const geometry = new THREE.BufferGeometry()
+  geometry.setAttribute('position', positionAttribute)
+  geometry.setAttribute('normal', normalAttribute)
+  geometry.setIndex(new THREE.BufferAttribute(indices, 1))
+
+  return { geometry, stagePositions, stageNormals, stageTips }
+}
+
+const createIrisGuideGeometry = () => {
+  const vertices = []
+  const centerX = 0.2
+  const circleSegments = 96
+  const outerRadius = 3.78
+
+  for (let index = 0; index < circleSegments; index += 1) {
+    const angleA = index / circleSegments * Math.PI * 2
+    const angleB = (index + 1) / circleSegments * Math.PI * 2
+    vertices.push(
+      centerX + Math.cos(angleA) * outerRadius,
+      Math.sin(angleA) * outerRadius,
+      0.04,
+      centerX + Math.cos(angleB) * outerRadius,
+      Math.sin(angleB) * outerRadius,
+      0.04,
+    )
+  }
+
+  for (let index = 0; index < 72; index += 1) {
+    const angle = index / 72 * Math.PI * 2
+    const tickLength = index % 6 === 0 ? 0.34 : 0.18
+    const innerRadius = outerRadius - tickLength
+    vertices.push(
+      centerX + Math.cos(angle) * innerRadius,
+      Math.sin(angle) * innerRadius,
+      0.04,
+      centerX + Math.cos(angle) * outerRadius,
+      Math.sin(angle) * outerRadius,
+      0.04,
+    )
+  }
+
+  const geometry = new THREE.BufferGeometry()
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3))
+  return geometry
+}
+
+const resolveStageBlend = (progress) => {
+  if (progress < 0.25) {
+    return { from: 0, to: 1, mix: THREE.MathUtils.smoothstep(progress, 0.19, 0.25) }
+  }
+  if (progress < 0.55) {
+    return { from: 1, to: 2, mix: THREE.MathUtils.smoothstep(progress, 0.47, 0.55) }
+  }
+  if (progress < 0.8) {
+    return { from: 2, to: 3, mix: THREE.MathUtils.smoothstep(progress, 0.72, 0.8) }
+  }
+  return { from: 3, to: 3, mix: 0 }
+}
+
+function FiberBundle({ animate, progressRef }) {
+  const bundleRef = useRef(null)
+  const strandMaterialRef = useRef(null)
+  const coreTipsRef = useRef(null)
+  const glowTipsRef = useRef(null)
+  const amberLightRef = useRef(null)
+  const goldLightRef = useRef(null)
+  const guideMaterialRef = useRef(null)
+  const shadowMaterialRef = useRef(null)
+  const fiberData = useMemo(createFiberData, [])
+  const tipGeometry = useMemo(() => new THREE.SphereGeometry(1, 10, 10), [])
+  const guideGeometry = useMemo(createIrisGuideGeometry, [])
+  const sparkGeometry = useMemo(() => {
+    const geometry = new THREE.BufferGeometry()
+    const positions = new Float32Array(STRAND_COUNT * SPARKS_PER_TIP * 3)
+    const attribute = new THREE.BufferAttribute(positions, 3)
+    attribute.setUsage(THREE.DynamicDrawUsage)
+    geometry.setAttribute('position', attribute)
+    return geometry
+  }, [])
+  const transform = useMemo(() => new THREE.Object3D(), [])
+  const currentTips = useMemo(() => new Float32Array(STRAND_COUNT * 3), [])
 
   useEffect(() => {
-    const field = fieldRef.current
-    const canvas = canvasRef.current
-    if (!field || !canvas) return undefined
+    coreTipsRef.current?.instanceMatrix.setUsage(THREE.DynamicDrawUsage)
+    glowTipsRef.current?.instanceMatrix.setUsage(THREE.DynamicDrawUsage)
 
-    const context = canvas.getContext('2d', { alpha: true })
-    if (!context) return undefined
+    return () => {
+      fiberData.geometry.dispose()
+      tipGeometry.dispose()
+      guideGeometry.dispose()
+      sparkGeometry.dispose()
+    }
+  }, [fiberData, guideGeometry, sparkGeometry, tipGeometry])
 
-    const createRadialSprite = (colorStops) => {
-      const sprite = document.createElement('canvas')
-      const spriteSize = 128
-      sprite.width = spriteSize
-      sprite.height = spriteSize
-      const spriteContext = sprite.getContext('2d')
-      if (!spriteContext) return sprite
+  useFrame(({ clock }) => {
+    const progress = progressRef.current
+    const { from, to, mix } = resolveStageBlend(progress)
+    const positions = fiberData.geometry.attributes.position.array
+    const normals = fiberData.geometry.attributes.normal.array
+    const fromPositions = fiberData.stagePositions[from]
+    const toPositions = fiberData.stagePositions[to]
+    const fromNormals = fiberData.stageNormals[from]
+    const toNormals = fiberData.stageNormals[to]
+    const fromTips = fiberData.stageTips[from]
+    const toTips = fiberData.stageTips[to]
+    const time = clock.getElapsedTime()
 
-      const center = spriteSize / 2
-      const gradient = spriteContext.createRadialGradient(center, center, 0, center, center, center)
-      colorStops.forEach(([offset, color]) => gradient.addColorStop(offset, color))
-      spriteContext.fillStyle = gradient
-      spriteContext.fillRect(0, 0, spriteSize, spriteSize)
-      return sprite
+    for (let offset = 0; offset < positions.length; offset += 3) {
+      positions[offset] = THREE.MathUtils.lerp(fromPositions[offset], toPositions[offset], mix)
+      positions[offset + 1] = THREE.MathUtils.lerp(fromPositions[offset + 1], toPositions[offset + 1], mix)
+      positions[offset + 2] = THREE.MathUtils.lerp(fromPositions[offset + 2], toPositions[offset + 2], mix)
+
+      const nx = THREE.MathUtils.lerp(fromNormals[offset], toNormals[offset], mix)
+      const ny = THREE.MathUtils.lerp(fromNormals[offset + 1], toNormals[offset + 1], mix)
+      const nz = THREE.MathUtils.lerp(fromNormals[offset + 2], toNormals[offset + 2], mix)
+      const normalLength = Math.hypot(nx, ny, nz) || 1
+      normals[offset] = nx / normalLength
+      normals[offset + 1] = ny / normalLength
+      normals[offset + 2] = nz / normalLength
     }
 
-    const glowSprite = createRadialSprite([
-      [0, 'rgba(255, 236, 176, 1)'],
-      [0.16, 'rgba(255, 157, 48, 0.92)'],
-      [0.48, 'rgba(255, 118, 20, 0.3)'],
-      [1, 'rgba(255, 118, 20, 0)'],
-    ])
-    const shadowSprite = createRadialSprite([
-      [0, 'rgba(70, 43, 23, 0.24)'],
-      [0.45, 'rgba(108, 68, 31, 0.1)'],
-      [1, 'rgba(108, 68, 31, 0)'],
-    ])
-
-    gsap.registerPlugin(ScrollTrigger)
-
-    const motionQuery = window.matchMedia
-      ? window.matchMedia('(prefers-reduced-motion: reduce)')
-      : { matches: false, addListener: () => {}, removeListener: () => {} }
-    let reducedMotion = motionQuery.matches
-    let width = 0
-    let height = 0
-    let pixelRatio = 1
-    let displayProgress = 0
-    let animationFrame = 0
-    let reducedFrame = 0
-    let previousTime = performance.now()
-    let pageScrollTrigger = null
-    let pageScrollTween = null
-
-    const drawContactShadow = (progress) => {
-      const irisAmount = smoothstep((progress - WAVE_STAGE) / (1 - WAVE_STAGE))
-      if (irisAmount <= 0) return
-      const centerX = mix(width * 0.66, irisGeometry(width, height).centerX, irisAmount)
-      const centerY = mix(height * 0.87, height * 0.82, irisAmount)
-      const radius = Math.min(width * 0.27, height * 0.3)
-      context.save()
-      context.globalAlpha = irisAmount
-      context.drawImage(
-        shadowSprite,
-        centerX - radius,
-        centerY - radius * 0.19,
-        radius * 2,
-        radius * 0.38,
-      )
-      context.restore()
+    const closeUp = THREE.MathUtils.smoothstep(progress, 0.8, 1)
+    const hangWeight = 1 - THREE.MathUtils.smoothstep(progress, 0.18, 0.28)
+    if (bundleRef.current) {
+      bundleRef.current.rotation.z = animate ? Math.sin(time * 0.34) * 0.014 * hangWeight : 0
+      bundleRef.current.rotation.y = animate ? Math.sin(time * 0.27) * 0.018 * hangWeight : 0
+      bundleRef.current.scale.setScalar(1 + closeUp * 0.16)
+      bundleRef.current.position.set(closeUp * 0.08, closeUp * 0.12, 0)
     }
 
-    const draw = (now) => {
-      if (!width || !height) return
-      const time = reducedMotion ? 0 : now / 1000
-      context.clearRect(0, 0, width, height)
-      drawContactShadow(displayProgress)
+    const tipScale = THREE.MathUtils.lerp(0.05, 0.075, closeUp)
+    const glowScale = THREE.MathUtils.lerp(0.15, 0.21, closeUp)
+    const sparkPositions = sparkGeometry.attributes.position.array
 
-      const paths = STRANDS.map((strand) => resolvePath(strand, width, height, time, displayProgress))
+    for (let index = 0; index < STRAND_COUNT; index += 1) {
+      const tipOffset = index * 3
+      const tipX = THREE.MathUtils.lerp(fromTips[tipOffset], toTips[tipOffset], mix)
+      const tipY = THREE.MathUtils.lerp(fromTips[tipOffset + 1], toTips[tipOffset + 1], mix)
+      const tipZ = THREE.MathUtils.lerp(fromTips[tipOffset + 2], toTips[tipOffset + 2], mix)
+      currentTips[tipOffset] = tipX
+      currentTips[tipOffset + 1] = tipY
+      currentTips[tipOffset + 2] = tipZ
 
-      context.save()
-      context.lineCap = 'round'
-      context.lineJoin = 'round'
-      STRANDS.forEach((strand, index) => {
-        const path = paths[index]
-        context.beginPath()
-        context.moveTo(path.x0, path.y0)
-        context.bezierCurveTo(path.c1x, path.c1y, path.c2x, path.c2y, path.x1, path.y1)
-        context.lineWidth = strand.width
-        context.strokeStyle = index % 9 === 0
-          ? 'rgba(105, 62, 29, 0.56)'
-          : 'rgba(35, 31, 29, 0.4)'
-        context.stroke()
-      })
-      context.restore()
+      transform.position.set(tipX, tipY, tipZ)
+      transform.scale.setScalar(tipScale)
+      transform.updateMatrix()
+      coreTipsRef.current?.setMatrixAt(index, transform.matrix)
 
-      context.save()
-      context.globalCompositeOperation = 'lighter'
-      STRANDS.forEach((strand, index) => {
-        const tip = paths[index]
-        const pulse = reducedMotion ? 1 : 0.82 + Math.sin(time * 1.35 + strand.phase) * 0.18
-        const radius = strand.tipSize * pulse
-        const glowSize = Math.max(9, radius * 9)
+      transform.scale.setScalar(glowScale)
+      transform.updateMatrix()
+      glowTipsRef.current?.setMatrixAt(index, transform.matrix)
 
-        context.drawImage(
-          glowSprite,
-          tip.x1 - glowSize / 2,
-          tip.y1 - glowSize / 2,
-          glowSize,
-          glowSize,
-        )
-
-        context.fillStyle = 'rgba(255, 151, 43, 0.86)'
-        context.beginPath()
-        context.arc(tip.x1, tip.y1, radius, 0, TAU)
-        context.fill()
-
-        context.fillStyle = 'rgba(255, 225, 151, 0.82)'
-        context.beginPath()
-        context.arc(tip.x1, tip.y1, Math.max(0.45, radius * 0.38), 0, TAU)
-        context.fill()
-
-        const orbitAngle = strand.particlePhase + time * 0.44
-        const particleX = tip.x1 + Math.cos(orbitAngle) * strand.orbit
-        const particleY = tip.y1 + Math.sin(orbitAngle) * strand.orbit * 0.68
-        context.globalAlpha = 0.42
-        context.beginPath()
-        context.arc(particleX, particleY, 0.65, 0, TAU)
-        context.fill()
-        context.globalAlpha = 1
-      })
-      context.restore()
-
-    }
-
-    const resize = () => {
-      width = Math.max(1, Math.round(window.innerWidth))
-      height = Math.max(1, Math.round(window.innerHeight))
-      pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5)
-      canvas.width = Math.round(width * pixelRatio)
-      canvas.height = Math.round(height * pixelRatio)
-      canvas.style.width = `${width}px`
-      canvas.style.height = `${height}px`
-      context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0)
-      draw(performance.now())
-    }
-
-    const drawReducedFrame = () => {
-      reducedFrame = 0
-      draw(performance.now())
-    }
-
-    const requestReducedDraw = () => {
-      if (!reducedMotion || reducedFrame) return
-      reducedFrame = window.requestAnimationFrame(drawReducedFrame)
-    }
-
-    const animate = (now) => {
-      const elapsed = Math.min(64, now - previousTime)
-      previousTime = now
-      const smoothing = 1 - Math.pow(0.001, elapsed / 1000)
-      const targetProgress = clamp(scrollProgressRef.current.progress)
-      displayProgress += (targetProgress - displayProgress) * smoothing
-      if (Math.abs(targetProgress - displayProgress) < 0.0001) displayProgress = targetProgress
-      draw(now)
-      animationFrame = window.requestAnimationFrame(animate)
-    }
-
-    const startAnimation = () => {
-      window.cancelAnimationFrame(animationFrame)
-      animationFrame = 0
-      previousTime = performance.now()
-      if (reducedMotion) {
-        displayProgress = clamp(scrollProgressRef.current.progress)
-        draw(previousTime)
-      } else {
-        animationFrame = window.requestAnimationFrame(animate)
+      for (let spark = 0; spark < SPARKS_PER_TIP; spark += 1) {
+        const sparkIndex = index * SPARKS_PER_TIP + spark
+        const sparkOffset = sparkIndex * 3
+        const seed = sparkIndex * 12.9898 + 2.417
+        const angle = time * (0.32 + spark * 0.12) + seed
+        const radius = 0.045 + (Math.sin(seed * 1.73) * 0.5 + 0.5) * 0.13
+        sparkPositions[sparkOffset] = tipX + Math.cos(angle) * radius
+        sparkPositions[sparkOffset + 1] = tipY + Math.sin(time * 0.72 + seed) * radius + 0.04
+        sparkPositions[sparkOffset + 2] = tipZ + Math.sin(angle) * radius
       }
     }
 
-    const onMotionPreferenceChange = (event) => {
-      reducedMotion = event.matches
-      scrollProgressRef.current.progress = clamp(
-        pageScrollTrigger?.progress ?? scrollProgressRef.current.progress,
-      )
-      startAnimation()
-    }
+    fiberData.geometry.attributes.position.needsUpdate = true
+    fiberData.geometry.attributes.normal.needsUpdate = true
+    sparkGeometry.attributes.position.needsUpdate = true
+    if (coreTipsRef.current) coreTipsRef.current.instanceMatrix.needsUpdate = true
+    if (glowTipsRef.current) glowTipsRef.current.instanceMatrix.needsUpdate = true
 
-    const resizeObserver = typeof ResizeObserver === 'undefined'
-      ? null
-      : new ResizeObserver(resize)
+    const irisVisibility = (
+      THREE.MathUtils.smoothstep(progress, 0.51, 0.59)
+      * (1 - THREE.MathUtils.smoothstep(progress, 0.74, 0.82))
+    )
+    if (guideMaterialRef.current) guideMaterialRef.current.opacity = irisVisibility * 0.54
+    if (shadowMaterialRef.current) shadowMaterialRef.current.opacity = irisVisibility * 0.075
 
-    resizeObserver?.observe(field)
-    window.addEventListener('resize', resize, { passive: true })
-    if (motionQuery.addEventListener) motionQuery.addEventListener('change', onMotionPreferenceChange)
-    else motionQuery.addListener(onMotionPreferenceChange)
-
-    resize()
-    scrollProgressRef.current.progress = 0
-    pageScrollTween = gsap.to(scrollProgressRef.current, {
-      progress: 1,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: document.body,
-        start: 'top top',
-        end: 'bottom bottom',
-        scrub: 1,
-        invalidateOnRefresh: true,
-        onUpdate: (self) => {
-          if (reducedMotion) {
-            scrollProgressRef.current.progress = clamp(self.progress)
-            displayProgress = scrollProgressRef.current.progress
-          }
-          requestReducedDraw()
-        },
-        onRefresh: (self) => {
-          if (reducedMotion) {
-            scrollProgressRef.current.progress = clamp(self.progress)
-            displayProgress = scrollProgressRef.current.progress
-          }
-          requestReducedDraw()
-        },
-      },
-    })
-    pageScrollTrigger = pageScrollTween.scrollTrigger
-    ScrollTrigger.refresh()
-    scrollProgressRef.current.progress = clamp(pageScrollTrigger.progress)
-    displayProgress = scrollProgressRef.current.progress
-    startAnimation()
-
-    return () => {
-      window.cancelAnimationFrame(animationFrame)
-      window.cancelAnimationFrame(reducedFrame)
-      pageScrollTrigger?.kill()
-      pageScrollTween?.kill()
-      resizeObserver?.disconnect()
-      window.removeEventListener('resize', resize)
-      if (motionQuery.removeEventListener) motionQuery.removeEventListener('change', onMotionPreferenceChange)
-      else motionQuery.removeListener(onMotionPreferenceChange)
-    }
-  }, [])
+    const warmHighlight = THREE.MathUtils.smoothstep(progress, 0.22, 0.58)
+    if (amberLightRef.current) amberLightRef.current.intensity = 12 + warmHighlight * 42
+    if (goldLightRef.current) goldLightRef.current.intensity = 8 + warmHighlight * 32
+    if (strandMaterialRef.current) strandMaterialRef.current.emissiveIntensity = 0.025 + warmHighlight * 0.075
+  })
 
   return (
-    <div
-      ref={fieldRef}
-      className="neural-field"
-      aria-hidden="true"
-    >
-      <canvas
-        ref={canvasRef}
-        aria-hidden="true"
-        style={{ position: 'absolute', inset: 0, display: 'block', width: '100%', height: '100%' }}
-      />
-    </div>
+    <group ref={bundleRef}>
+      <mesh geometry={fiberData.geometry} frustumCulled={false}>
+        <meshPhysicalMaterial
+          ref={strandMaterialRef}
+          color="#211B17"
+          emissive="#D97706"
+          emissiveIntensity={0.025}
+          metalness={0.88}
+          roughness={0.3}
+          clearcoat={0.3}
+          clearcoatRoughness={0.24}
+        />
+      </mesh>
+
+      <mesh position={[0.38, -0.18, -0.42]} renderOrder={-1}>
+        <ringGeometry args={[1.22, 3.88, 96]} />
+        <meshBasicMaterial
+          ref={shadowMaterialRef}
+          color="#120D09"
+          transparent
+          opacity={0}
+          depthWrite={false}
+        />
+      </mesh>
+
+      <lineSegments geometry={guideGeometry} frustumCulled={false}>
+        <lineBasicMaterial
+          ref={guideMaterialRef}
+          color="#D97706"
+          transparent
+          opacity={0}
+          depthWrite={false}
+          toneMapped={false}
+        />
+      </lineSegments>
+
+      <points geometry={sparkGeometry} frustumCulled={false}>
+        <pointsMaterial
+          color="#FFD447"
+          size={0.035}
+          sizeAttenuation
+          transparent
+          opacity={0.82}
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+          toneMapped={false}
+        />
+      </points>
+
+      <instancedMesh ref={glowTipsRef} args={[tipGeometry, undefined, STRAND_COUNT]} frustumCulled={false}>
+        <meshBasicMaterial
+          color="#FFD447"
+          transparent
+          opacity={0.18}
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+          toneMapped={false}
+        />
+      </instancedMesh>
+
+      <instancedMesh ref={coreTipsRef} args={[tipGeometry, undefined, STRAND_COUNT]} frustumCulled={false}>
+        <meshStandardMaterial
+          color="#FFD447"
+          emissive="#FFAA00"
+          emissiveIntensity={3.5}
+          roughness={0.2}
+          toneMapped={false}
+        />
+      </instancedMesh>
+
+      <pointLight ref={amberLightRef} position={[2.8, 1.4, 3.5]} color="#F59E0B" intensity={12} distance={12} />
+      <pointLight ref={goldLightRef} position={[-2.6, -1.2, 3]} color="#D97706" intensity={8} distance={11} />
+    </group>
+  )
+}
+
+export default function NeuralField() {
+  const reduceMotion = useReducedMotion()
+  const progressRef = useRef(reduceMotion ? 1 : 0)
+
+  useLayoutEffect(() => {
+    if (reduceMotion) {
+      progressRef.current = 1
+      return undefined
+    }
+
+    const scrollState = { progress: 0 }
+    const context = gsap.context(() => {
+      gsap.to(scrollState, {
+        progress: 1,
+        ease: 'none',
+        onUpdate: () => {
+          progressRef.current = scrollState.progress
+        },
+        scrollTrigger: {
+          trigger: document.documentElement,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 1,
+          invalidateOnRefresh: true,
+        },
+      })
+    }, document.documentElement)
+
+    return () => context.revert()
+  }, [reduceMotion])
+
+  if (typeof document === 'undefined') return null
+
+  return createPortal(
+    <div className="neural-field" aria-hidden="true">
+      <Canvas
+        camera={{ position: [0, 0.1, 11.7], fov: 43, near: 0.1, far: 40 }}
+        dpr={[1, 1.5]}
+        gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
+        onCreated={({ gl }) => gl.setClearColor('#ffffff', 0)}
+      >
+        <ambientLight intensity={0.72} />
+        <hemisphereLight args={['#fff8e8', '#17110d', 1.15]} />
+        <directionalLight position={[3, 5, 7]} color="#FFE2A8" intensity={2.6} />
+        <FiberBundle animate={!reduceMotion} progressRef={progressRef} />
+      </Canvas>
+    </div>,
+    document.body,
   )
 }

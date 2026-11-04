@@ -1,7 +1,9 @@
 import { useState } from 'react'
-import { ArrowUpRight, Github, Mail, Send } from 'lucide-react'
+import { ArrowUpRight, Mail, Send } from 'lucide-react'
+import samLogo from '../../SAM_Full_Transparent_Cropped.png'
 import { brand, serviceOptions } from '../data/agencyData'
-import SectionHeading from './SectionHeading'
+
+const clearValidity = (event) => event.currentTarget.setCustomValidity('')
 
 export default function ContactSection() {
   const [message, setMessage] = useState('')
@@ -9,67 +11,65 @@ export default function ContactSection() {
   const prepareBrief = (event) => {
     event.preventDefault()
     const form = event.currentTarget
+    const nameInput = form.elements.namedItem('name')
+    const scopeInput = form.elements.namedItem('scope')
+
+    if (nameInput.value.trim().length < 2) nameInput.setCustomValidity('Please enter your full name.')
+    if (scopeInput.value.trim().length < 40) scopeInput.setCustomValidity('Please add a little more project context (at least 40 characters).')
     if (!form.reportValidity()) return
 
     const data = new FormData(form)
-    const company = data.get('company') || 'Organization'
-    const service = data.get('service') || 'General Inquiry'
-    const subject = encodeURIComponent(`Project discovery — ${service} — ${company}`)
+    const company = data.get('company') || 'Not provided'
+    const service = data.get('service') || 'General inquiry'
+    const subject = encodeURIComponent(`Project conversation — ${service} — ${company}`)
     const body = encodeURIComponent([
       `Name: ${data.get('name')}`,
-      `Company / Organization: ${company}`,
-      `Work Email: ${data.get('email')}`,
-      `Service Required: ${service}`,
+      `Company / organization: ${company}`,
+      `Reply email: ${data.get('email')}`,
+      `Area of interest: ${service}`,
       '',
-      'Project Scope / Architecture Needs:',
+      'Project context:',
       data.get('scope'),
     ].join('\n'))
 
-    setMessage('Your project brief is ready. Send the prepared email from your mail application to complete the inquiry.')
+    setMessage('Your brief is ready. Complete the handoff in the email application that opens next.')
     window.location.href = `mailto:${brand.email}?subject=${subject}&body=${body}`
   }
 
   return (
-    <section className="section contact-section" id="contact" aria-labelledby="contact-title">
-      <div className="contact-section__glow" aria-hidden="true" />
-      <div className="contact-layout">
-        <div className="contact-intro">
-          <SectionHeading
-            eyebrow="Project discovery"
-            title="Bring the hardest system constraint."
-            description="Share the current architecture, the operational risk, and the outcome that matters. SAM Intelligence Group will map the next practical engineering move."
-            id="contact-title"
-          />
-
-          <div className="contact-direct">
-            <span>Direct channels</span>
+    <section className="contact section" id="contact" aria-labelledby="contact-title">
+      <div className="contact__glow" aria-hidden="true" />
+      <div className="contact__layout shell">
+        <div className="contact__intro">
+          <div className="contact__brand-lockup"><img src={samLogo} alt="" width="126" height="89" /><span>{brand.name}</span></div>
+          <p className="eyebrow"><span /> Project conversation</p>
+          <h2 id="contact-title">Start with the system as it is today.</h2>
+          <p>Share the workflow, data, users, constraints, and outcome that matter. That is enough to begin a practical technical conversation.</p>
+          <div className="contact__direct">
+            <span>Prefer direct email?</span>
             <a href={`mailto:${brand.email}`}><Mail aria-hidden="true" /> {brand.email}<ArrowUpRight aria-hidden="true" /></a>
-            <a href={brand.github} target="_blank" rel="noreferrer"><Github aria-hidden="true" /> GitHub / S-A000<ArrowUpRight aria-hidden="true" /></a>
           </div>
-
-          <div className="contact-response glass-panel">
-            <span className="signal-dot" aria-hidden="true" />
-            <div><b>Architecture-first intake</b><p>Every inquiry starts with scope, constraints, and deployment context—not a generic sales script.</p></div>
+          <div className="contact__note">
+            <i aria-hidden="true" />
+            <p><strong>No server submission</strong><span>This website prepares an email locally. It does not store your form data.</span></p>
           </div>
         </div>
 
-        <form className="intake-form glass-panel" onSubmit={prepareBrief}>
-          <div className="intake-form__header">
-            <div><span>SECURE INTAKE / 01</span><h3>Project architecture brief</h3></div>
-            <span className="intake-form__status"><i /> Local handoff</span>
+        <form className="contact-form" onSubmit={prepareBrief}>
+          <header>
+            <div><span>PROJECT BRIEF / 01</span><h3>Prepare the conversation</h3></div>
+            <small><i /> Opens your email app</small>
+          </header>
+          <div className="contact-form__grid">
+            <label><span>Name</span><input name="name" type="text" autoComplete="name" minLength="2" placeholder="Full name" required onInput={clearValidity} /></label>
+            <label><span>Company / organization</span><input name="company" type="text" autoComplete="organization" minLength="2" placeholder="Organization" required /></label>
+            <label className="contact-form__wide"><span>Work email</span><input name="email" type="email" autoComplete="email" inputMode="email" placeholder="name@company.com" required /></label>
+            <label className="contact-form__wide"><span>Area of interest</span><select name="service" defaultValue="" required><option value="" disabled>Select a service</option>{serviceOptions.map((option) => <option key={option}>{option}</option>)}</select></label>
+            <label className="contact-form__wide"><span>Project context</span><textarea name="scope" rows="6" minLength="40" placeholder="What exists today, what needs to change, and which constraints should shape the solution?" required onInput={clearValidity} /></label>
           </div>
-
-          <div className="form-grid">
-            <label><span>Name</span><input name="name" type="text" autoComplete="name" placeholder="Full name" required /></label>
-            <label><span>Company / Organization</span><input name="company" type="text" autoComplete="organization" placeholder="Organization" required /></label>
-            <label className="form-field--wide"><span>Work Email</span><input name="email" type="email" autoComplete="email" inputMode="email" placeholder="name@company.com" required /></label>
-            <label className="form-field--wide"><span>Service Needed</span><select name="service" defaultValue="" required><option value="" disabled>Select an engineering track</option>{serviceOptions.map((option) => <option key={option}>{option}</option>)}</select></label>
-            <label className="form-field--wide"><span>Project Details</span><textarea name="scope" rows="6" placeholder="Current system, target state, constraints, timeline, and critical risks…" required /></label>
-          </div>
-
-          <button className="button button--primary intake-form__submit" type="submit">Prepare project brief <Send aria-hidden="true" /></button>
-          <p className="form-note">This static intake prepares an email in your local mail application. No form data is stored by this website.</p>
-          <p className="form-message" aria-live="polite">{message}</p>
+          <button className="button button--primary contact-form__submit" type="submit">Open prepared email <Send aria-hidden="true" /></button>
+          <p className="contact-form__fineprint">Submitting this form only opens a prefilled draft in your email application. You choose whether to send it.</p>
+          <p className="contact-form__message" aria-live="polite">{message}</p>
         </form>
       </div>
     </section>

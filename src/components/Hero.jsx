@@ -1,60 +1,115 @@
-import { ArrowDown, ArrowRight, Database, Gauge, ShieldCheck, Workflow } from 'lucide-react'
-import { motion, useReducedMotion } from 'framer-motion'
-import { trustMetrics } from '../data/agencyData'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { ArrowDown, ArrowRight, Braces, Cpu, Database } from 'lucide-react'
+import { useReducedMotion } from 'framer-motion'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import samLogo from '../../SAM_Full_Transparent_Cropped.png'
+import { brand, heroProof } from '../data/agencyData'
+import IntelligenceCanvas from './IntelligenceCanvas'
 
-const metricIcons = [Workflow, Database, ShieldCheck, Gauge]
+if (typeof window !== 'undefined') gsap.registerPlugin(ScrollTrigger)
+
+const focusAreas = [
+  { icon: Database, label: 'Data foundations' },
+  { icon: Cpu, label: 'Applied intelligence' },
+  { icon: Braces, label: 'Custom software' },
+]
 
 export default function Hero() {
-  const reduceMotion = useReducedMotion()
+  const reduceMotion = Boolean(useReducedMotion())
+  const heroRef = useRef(null)
+  const scrollProgress = useRef(0)
+  const introStartedAt = useRef(
+    typeof performance === 'undefined' ? 0 : performance.now(),
+  ).current
+  const [revealed, setRevealed] = useState(reduceMotion)
+  const revealCopy = useCallback(() => setRevealed(true), [])
+
+  useEffect(() => {
+    if (reduceMotion) {
+      setRevealed(true)
+      return undefined
+    }
+
+    const fallbackReveal = window.setTimeout(revealCopy, 4600)
+    return () => window.clearTimeout(fallbackReveal)
+  }, [reduceMotion, revealCopy])
+
+  useLayoutEffect(() => {
+    const hero = heroRef.current
+    if (!hero || reduceMotion || typeof window === 'undefined' || navigator.userAgent.includes('jsdom')) {
+      scrollProgress.current = 0
+      hero?.style.setProperty('--hero-scroll-progress', '0')
+      return undefined
+    }
+
+    const trigger = ScrollTrigger.create({
+      trigger: hero,
+      start: 'top top',
+      end: 'bottom top',
+      onUpdate: ({ progress }) => {
+        scrollProgress.current = progress
+        hero.style.setProperty('--hero-scroll-progress', progress.toFixed(4))
+      },
+    })
+
+    return () => trigger.kill()
+  }, [reduceMotion])
 
   return (
-    <section className="hero" id="home" aria-labelledby="hero-title">
-      <div className="hero__sticky">
-        <div className="hero__grid-lines" aria-hidden="true" />
+    <section
+      className={`hero${revealed ? ' hero--revealed' : ''}`}
+      id="home"
+      aria-labelledby="hero-title"
+      data-hero-phase={revealed ? 'settling' : 'forming'}
+      ref={heroRef}
+    >
+      <div className="hero__visual" aria-hidden="true">
+        <IntelligenceCanvas
+          introStartedAt={introStartedAt}
+          onReveal={revealCopy}
+          scrollProgress={scrollProgress}
+        />
+      </div>
 
-        <motion.div
-          className="hero__content"
-          initial={reduceMotion ? false : { opacity: 0, y: 22 }}
-          animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <div className="hero__badge">
-            <span aria-hidden="true" />
-            Enterprise AI <b>•</b> MLOps <b>•</b> Data <b>•</b> Cyber Defense
+      <div className="hero__inner shell">
+        <div className="hero__copy">
+          <div className="hero__brand-lockup"><img src={samLogo} alt="" width="112" height="79" /><span>{brand.name}</span></div>
+          <p className="eyebrow"><span /> Data, software, and applied intelligence</p>
+          <h1 id="hero-title">
+            Build the systems behind the <em>next decision.</em>
+          </h1>
+          <p className="hero__description">
+            SAM Intelligence Group designs data platforms, MLOps infrastructure, custom software,
+            and applied AI workflows as connected, production-minded systems.
+          </p>
+          <div className="hero__actions">
+            <a className="button button--primary" href="#services">
+              Explore services <ArrowRight aria-hidden="true" />
+            </a>
+            <a className="button button--quiet" href="#contact">Discuss a project</a>
           </div>
 
-          <h1 className="hero__title" id="hero-title">
-            <span className="hero__title-light">Autonomous AI &amp; Data Systems</span>
-            <span className="hero__title-dark">Engineered for Enterprise Scale</span>
-          </h1>
+          <ul className="hero__focus" aria-label="Core engineering focus">
+            {focusAreas.map(({ icon: Icon, label }) => (
+              <li key={label}><Icon aria-hidden="true" /><span>{label}</span></li>
+            ))}
+          </ul>
+        </div>
 
-          <p className="hero__description">
-            SAM Intelligence Group builds production-grade AI architectures, automated data pipelines,
-            resilient MLOps infrastructure, and proactive cyber defense.
-          </p>
-
-          <a className="hero__action" href="#services">
-            Explore Capabilities <ArrowRight aria-hidden="true" />
-          </a>
-        </motion.div>
-
-        <dl className="hero__trust-strip" aria-label="SAM Intelligence Group capabilities">
-          {trustMetrics.map(({ value, label }, index) => {
-            const Icon = metricIcons[index]
-            return (
-              <div className={`hero__metric${index === 2 ? ' hero__metric--active' : ''}`} key={value}>
-                <Icon aria-hidden="true" />
-                <dt>{value}</dt>
-                <dd>{label}</dd>
-              </div>
-            )
-          })}
-        </dl>
-
-        <a className="hero__scroll-cue" href="#services" aria-label="Scroll to services">
-          <span>Scroll to explore</span><ArrowDown aria-hidden="true" />
-        </a>
+        <div className="hero__proof" aria-label="SAM Intelligence Group at a glance">
+          {heroProof.map((item) => (
+            <div key={item.label}>
+              <strong>{item.value}</strong>
+              <span>{item.label}</span>
+            </div>
+          ))}
+        </div>
       </div>
+
+      <a className="hero__scroll" href="#services">
+        <span>Explore the system</span><ArrowDown aria-hidden="true" />
+      </a>
     </section>
   )
 }

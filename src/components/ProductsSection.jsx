@@ -1,4 +1,4 @@
-import { ArrowRight, CheckCircle2, ExternalLink, Eye, ShieldCheck } from 'lucide-react'
+import { ArrowRight, CheckCircle2, Eye, ShieldCheck } from 'lucide-react'
 import { flagshipProducts } from '../data/agencyData'
 
 const productIcons = {
@@ -68,29 +68,12 @@ export default function ProductsSection() {
                   </ul>
                 </div>
 
-                <ul className="products__stack" aria-label={`${product.name} technology stack`}>
-                  {product.stack.map((technology) => <li key={technology}>{technology}</li>)}
-                </ul>
               </div>
 
-              {product.link && (
-                <a
-                  className="products__link"
-                  href={product.link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`${product.link.label} for ${product.name} (opens in a new tab)`}
-                >
-                  <span>{product.link.label}</span>
-                  <ExternalLink aria-hidden="true" />
-                </a>
-              )}
-              {!product.link && (
-                <a className="products__link" href="#contact" aria-label={`Request a deployment review for ${product.name}`}>
-                  <span>Request a deployment review</span>
-                  <ArrowRight aria-hidden="true" />
-                </a>
-              )}
+              <a className="products__link" href="#contact" aria-label={`Request a deployment review for ${product.name}`}>
+                <span>Request a deployment review</span>
+                <ArrowRight aria-hidden="true" />
+              </a>
             </article>
           )
         })}

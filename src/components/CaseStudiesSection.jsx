@@ -1,5 +1,5 @@
 import { useId, useMemo, useState } from 'react'
-import { CircleAlert, ExternalLink, ShieldCheck, TrendingUp, Workflow } from 'lucide-react'
+import { CircleAlert, ShieldCheck, TrendingUp, Workflow } from 'lucide-react'
 import { caseStudies, caseStudyFilters } from '../data/agencyData'
 
 const narrativeItems = [
@@ -81,27 +81,6 @@ export default function CaseStudiesSection() {
               ))}
             </dl>
 
-            <div className="case-study-card__footer">
-              <ul className="case-study-card__stack" aria-label={`Technology used for ${study.title}`}>
-                {study.stack.map((technology) => <li key={technology}>{technology}</li>)}
-              </ul>
-
-              {study.links?.length > 0 && (
-                <nav className="case-study-card__links" aria-label={`Verified resources for ${study.title}`}>
-                  {study.links.map((link) => (
-                    <a
-                      href={link.url}
-                      key={`${study.id}-${link.label}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`${link.label} for ${study.title} (opens in a new tab)`}
-                    >
-                      {link.label}<ExternalLink aria-hidden="true" />
-                    </a>
-                  ))}
-                </nav>
-              )}
-            </div>
           </article>
         ))}
       </div>

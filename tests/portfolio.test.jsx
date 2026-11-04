@@ -1,75 +1,104 @@
+import { beforeEach, describe, expect, it } from 'vitest'
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
 import App from '../src/App'
-import { caseStudies, flagshipProducts, servicePillars, technologyGroups } from '../src/data/agencyData'
+import { pastProjects } from '../src/data/projectsData'
+
+const renderRoute = (route = '/') => {
+  window.history.replaceState({}, '', route)
+  return render(<App />)
+}
 
 describe('SAM Intelligence Group website', () => {
-  it('renders the enterprise brand and core navigation', () => {
-    render(<App />)
-    expect(screen.getAllByText('SAM Intelligence Group').length).toBeGreaterThan(0)
-    const primaryNavigation = within(screen.getByRole('navigation', { name: 'Primary navigation' }))
-    expect(primaryNavigation.getByRole('link', { name: 'Services' })).toHaveAttribute('href', '#services')
-    expect(primaryNavigation.getByRole('link', { name: 'Flagship Products' })).toHaveAttribute('href', '#products')
-    expect(primaryNavigation.getByRole('link', { name: 'Book a Consultation' })).toHaveAttribute('href', '#contact')
+  beforeEach(() => {
+    window.history.replaceState({}, '', '/')
   })
 
-  it('renders every service pillar from the central agency data', () => {
-    render(<App />)
-    servicePillars.forEach((pillar) => {
-      expect(screen.getByRole('heading', { name: pillar.title })).toBeInTheDocument()
-    })
+  it('renders company navigation with dedicated About and Projects routes', () => {
+    renderRoute()
+    const navigation = within(screen.getByRole('navigation', { name: 'Primary navigation' }))
+    expect(navigation.getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/#home')
+    expect(navigation.getByRole('link', { name: 'Services' })).toHaveAttribute('href', '/#services')
+    expect(navigation.getByRole('link', { name: 'Work / Projects' })).toHaveAttribute('href', '/projects')
+    expect(navigation.getByRole('link', { name: 'About Us' })).toHaveAttribute('href', '/about')
+    expect(navigation.getByRole('link', { name: 'Contact' })).toHaveAttribute('href', '/#contact')
   })
 
-  it('renders both flagship products and only verified product links', () => {
-    render(<App />)
-    flagshipProducts.forEach((product) => {
-      expect(screen.getByRole('heading', { name: product.name })).toBeInTheDocument()
-    })
-    expect(screen.queryByRole('link', { name: /repository for botshield/i })).not.toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /view repository for deepguard/i })).toHaveAttribute('href', 'https://github.com/S-A000/deepguard')
-  })
-
-  it('filters case studies by engineering domain', async () => {
+  it('provides four accessible service scenes in the required order', async () => {
     const user = userEvent.setup()
-    render(<App />)
+    renderRoute()
+    const tabs = screen.getAllByRole('tab')
+    expect(tabs).toHaveLength(4)
+    expect(tabs.map((tab) => tab.textContent)).toEqual([
+      expect.stringContaining('Data Engineering'),
+      expect.stringContaining('MLOps'),
+      expect.stringContaining('Web & Software'),
+      expect.stringContaining('AI Solutions'),
+    ])
+
+    await user.click(tabs[1])
+    expect(screen.getByRole('heading', { name: 'MLOps', level: 3 })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: /model artifact moves/i })).toBeInTheDocument()
+
+    await user.keyboard('{ArrowRight}')
+    expect(screen.getByRole('heading', { name: 'Web Development & Custom Software', level: 3 })).toBeInTheDocument()
+  })
+
+  it('positions the company around the four primary services only', () => {
+    renderRoute()
+    expect(screen.getAllByRole('tab')).toHaveLength(4)
+    expect(screen.queryByRole('heading', { name: /cybersecurity/i })).not.toBeInTheDocument()
+    expect(screen.queryByText(/founder-led/i)).not.toBeInTheDocument()
+  })
+
+  it('renders the complete project library with filters and details', async () => {
+    const user = userEvent.setup()
+    renderRoute('/projects')
+    expect(screen.getByRole('status')).toHaveTextContent('18 projects shown')
+    pastProjects.forEach((project) => {
+      expect(screen.getByRole('heading', { name: project.title, level: 2 })).toBeInTheDocument()
+    })
 
     await user.click(screen.getByRole('button', { name: 'MLOps & Data' }))
-    expect(screen.getByRole('heading', { name: 'sam-eda' })).toBeInTheDocument()
-    expect(screen.queryByRole('heading', { name: 'SmartPark-Vision' })).not.toBeInTheDocument()
-    expect(screen.getByText('3 case studies shown')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'AQI Forecasting MLOps Platform', level: 2 })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Industrial Print Proofing & Label Validation Suite', level: 2 })).not.toBeInTheDocument()
 
-    await user.click(screen.getByRole('button', { name: 'Computer Vision & AI' }))
-    expect(screen.getByRole('heading', { name: 'SmartPark-Vision' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'PalmPilot' })).toBeInTheDocument()
+    await user.click(screen.getAllByRole('button', { name: /view details/i, exact: false })[0])
+    const dialog = screen.getByRole('dialog')
+    expect(dialog).toBeInTheDocument()
+    expect(within(dialog).getByRole('heading', { name: 'AQI Forecasting MLOps Platform', level: 2 })).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /github/i })).not.toBeInTheDocument()
   })
 
-  it('renders all case studies by default', () => {
-    render(<App />)
-    caseStudies.forEach((study) => expect(screen.getByRole('heading', { name: study.title })).toBeInTheDocument())
-    expect(screen.getByText(`${caseStudies.length} case studies shown`)).toBeInTheDocument()
+  it('renders a substantive company-focused About page and route metadata', () => {
+    renderRoute('/about')
+    expect(screen.getByRole('heading', { name: /intelligence is useful/i, level: 1 })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /four services, designed to work together/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Data Engineering', level: 3 })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'MLOps', level: 3 })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Web Development & Custom Software', level: 3 })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'AI Solutions', level: 3 })).toBeInTheDocument()
+    expect(screen.queryByText(/founder/i)).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /github/i })).not.toBeInTheDocument()
+    expect(document.title).toBe('About Us | SAM Intelligence Group')
   })
 
-  it('renders the categorized technology matrix without skill percentages', () => {
-    render(<App />)
-    technologyGroups.forEach((group) => expect(screen.getByRole('heading', { name: group.label })).toBeInTheDocument())
-    expect(screen.queryByText(/90%/)).not.toBeInTheDocument()
-  })
-
-  it('provides the complete project discovery intake form', () => {
-    render(<App />)
+  it('makes the local email handoff and validation explicit', () => {
+    renderRoute()
     expect(screen.getByLabelText('Name')).toBeRequired()
-    expect(screen.getByLabelText('Company / Organization')).toBeRequired()
-    expect(screen.getByLabelText('Work Email')).toHaveAttribute('type', 'email')
-    expect(screen.getByLabelText('Service Required')).toBeRequired()
-    expect(screen.getByLabelText('Project Scope / Architecture Needs')).toBeRequired()
-    expect(screen.getByRole('option', { name: 'Cybersecurity / BotShield' })).toBeInTheDocument()
+    expect(screen.getByLabelText('Company / organization')).toBeRequired()
+    expect(screen.getByLabelText('Work email')).toHaveAttribute('type', 'email')
+    expect(screen.getByLabelText('Area of interest')).toBeRequired()
+    expect(screen.getByLabelText('Project context')).toHaveAttribute('minlength', '40')
+    expect(screen.getByText(/only opens a prefilled draft/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Open prepared email' })).toBeInTheDocument()
   })
 
-  it('removes personal portfolio and CV language', () => {
-    render(<App />)
-    expect(screen.queryByText(/download cv/i)).not.toBeInTheDocument()
-    expect(screen.queryByText(/open to opportunities/i)).not.toBeInTheDocument()
-    expect(screen.queryByText(/more about me/i)).not.toBeInTheDocument()
+  it('does not display unsupported hardening or deployment claims', () => {
+    renderRoute()
+    expect(screen.queryByText(/100% hardened/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/enterprise ready/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/active deployment/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/secure intake/i)).not.toBeInTheDocument()
   })
 })

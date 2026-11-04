@@ -1,5 +1,6 @@
 import { BrainCircuit, Code2, Database, ServerCog } from 'lucide-react'
 import { technologyGroups } from '../data/agencyData'
+import TechnologyBadge from './TechnologyBadge'
 
 const groupIcons = [BrainCircuit, Database, Code2, ServerCog]
 
@@ -23,7 +24,7 @@ export default function StackSection() {
                 <h3>{group.label}</h3>
               </header>
               <ul className="stack-group__items" aria-label={`${group.label} technologies`}>
-                {group.items.map((technology) => <li key={technology}>{technology}</li>)}
+                {group.items.map((technology) => <li key={technology}><TechnologyBadge name={technology} /></li>)}
               </ul>
             </article>
           )
