@@ -54,7 +54,7 @@ describe('SAM Intelligence Group website', () => {
   it('renders the complete project library with filters and details', async () => {
     const user = userEvent.setup()
     renderRoute('/projects')
-    expect(screen.getByRole('status')).toHaveTextContent('18 projects shown')
+    expect(screen.getByRole('status')).toHaveTextContent(`${pastProjects.length} projects shown`)
     pastProjects.forEach((project) => {
       expect(screen.getByRole('heading', { name: project.title, level: 2 })).toBeInTheDocument()
     })
@@ -63,7 +63,8 @@ describe('SAM Intelligence Group website', () => {
     expect(screen.getByRole('heading', { name: 'AQI Forecasting MLOps Platform', level: 2 })).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'Industrial Print Proofing & Label Validation Suite', level: 2 })).not.toBeInTheDocument()
 
-    await user.click(screen.getAllByRole('button', { name: /view details/i, exact: false })[0])
+    const aqiCard = screen.getByRole('heading', { name: 'AQI Forecasting MLOps Platform', level: 2 }).closest('article')
+    await user.click(within(aqiCard).getByRole('button', { name: /view details/i }))
     const dialog = screen.getByRole('dialog')
     expect(dialog).toBeInTheDocument()
     expect(within(dialog).getByRole('heading', { name: 'AQI Forecasting MLOps Platform', level: 2 })).toBeInTheDocument()

@@ -57,7 +57,7 @@ export default function Navbar() {
   }, [menuOpen])
 
   const isActive = (item) => {
-    if (item.route && normalizePath(item.route) === path) return true
+    if (item.route && (normalizePath(item.route) === path || (item.route === '/case-studies' && path.startsWith('/case-studies/')))) return true
     return path === '/' && item.section === activeSection
   }
 

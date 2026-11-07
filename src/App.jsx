@@ -3,6 +3,9 @@ import Navbar from './components/Navbar'
 import AboutPage from './pages/CompanyAboutPage'
 import HomePage from './pages/HomePage'
 import ProjectsPage from './pages/ProjectsPage'
+import CaseStudiesPage from './pages/CaseStudiesPage'
+import CaseStudyPage from './pages/CaseStudyPage'
+import IndustriesPage from './pages/IndustriesPage'
 
 const normalizePath = (value) => value.replace(/\/+$/, '') || '/'
 
@@ -19,7 +22,8 @@ function NotFoundPage() {
 
 export default function App() {
   const path = normalizePath(window.location.pathname)
-  const page = path === '/about'
+  const caseId = ['/case-studies/lobatse-pharmacy', '/case-studies/aqi-forecasting'].includes(path) ? path.split('/').at(-1) : null
+  const page = path === '/industries' ? <IndustriesPage /> : caseId ? <CaseStudyPage id={caseId} /> : path === '/case-studies' ? <CaseStudiesPage /> : path === '/about'
     ? <AboutPage />
     : path === '/projects'
       ? <ProjectsPage />

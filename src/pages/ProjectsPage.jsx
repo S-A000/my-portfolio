@@ -1,11 +1,12 @@
 import { ArrowRight } from 'lucide-react'
 import ProjectLibrary from '../components/ProjectLibrary'
 import usePageMeta from '../hooks/usePageMeta'
+import { pastProjects } from '../data/projectsData'
 
 export default function ProjectsPage() {
   usePageMeta({
     title: 'Work & Projects | SAM Intelligence Group',
-    description: 'Explore 18 SAM Intelligence Group projects across data engineering, MLOps, custom software, AI, computer vision, cybersecurity, and developer tooling.',
+    description: `Explore ${pastProjects.length} SAM Intelligence Group projects across data engineering, MLOps, custom software, AI, computer vision, cybersecurity, and developer tooling.`,
   })
 
   return (

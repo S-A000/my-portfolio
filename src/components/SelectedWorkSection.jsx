@@ -17,7 +17,7 @@ export default function SelectedWorkSection() {
           </div>
           <div className="section-intro__action">
             <p>Every item is drawn from the existing project library and labelled by its actual maturity.</p>
-            <a href="/projects">Explore all 18 projects <ArrowRight aria-hidden="true" /></a>
+            <a href="/projects">Explore all {pastProjects.length} projects <ArrowRight aria-hidden="true" /></a>
           </div>
         </header>
 

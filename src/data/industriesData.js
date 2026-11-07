@@ -1,0 +1,95 @@
+export const industries = [
+  {
+    id: 'pharmacies-healthcare-retail', name: 'Pharmacies & Healthcare Retail', selector: 'Pharmacies', number: '01',
+    heading: 'A connected experience for customers and pharmacy teams.',
+    problem: 'Customers need to find products and place orders clearly, while pharmacy staff need dependable control over catalog, stock, orders, and prescription review. These workflows cannot be treated as a generic product grid.',
+    previewProblem: 'Product discovery, stock, orders, and prescription review need to work together.',
+    previewSolution: 'Connect a searchable storefront to inventory, order tools, and a separate pharmacist-review workflow.',
+    previewLink: 'Explore pharmacy solutions',
+    solutions: ['Searchable pharmacy storefronts and product catalogs.', 'Customer accounts, baskets, checkout, and order status.', 'Inventory and order administration tools.', 'Prescription upload followed by a pharmacist-review workflow.', 'Reliable catalog imports and product-media handling.', 'Role-appropriate access to operational and private files.'],
+    services: ['web-software', 'data-engineering'],
+    workflow: ['Catalog', 'Storefront', 'Orders', 'Pharmacist review'],
+    related: [{ projectId: 'lobatse-pharmacy', type: 'Case study', href: '/case-studies/lobatse-pharmacy', note: 'A custom pharmacy platform connecting customer shopping with pharmacy operations.' }],
+    cta: 'Discuss a pharmacy platform',
+  },
+  {
+    id: 'retail-ecommerce', name: 'Retail & E-commerce', selector: 'Retail & E-commerce', number: '02',
+    heading: 'Commerce systems that keep the storefront and operations connected.',
+    problem: 'As catalogs grow, product discovery, imagery, availability, checkout, and back-office updates become harder to keep consistent.',
+    solutions: ['Responsive storefronts and customer accounts.', 'Search, filters, product-detail, basket, and checkout experiences.', 'Catalog-import pipelines and image processing.', 'Inventory, order, cancellation, and refund workflows where required.', 'Admin interfaces and API integrations.', 'Reporting on operational data once reliable data is available.'],
+    services: ['web-software', 'data-engineering'],
+    workflow: ['Product data', 'Discovery', 'Checkout', 'Operations'],
+    related: [{ projectId: 'lobatse-pharmacy', type: 'Related commerce experience', href: '/case-studies/lobatse-pharmacy', note: 'The same Lobatse Pharmacy project featured above, viewed through its commerce workflows; not a separate retail client.' }],
+    cta: 'Plan a commerce system',
+  },
+  {
+    id: 'wholesale-distribution', name: 'B2B Wholesale & Distribution', selector: 'Wholesale & Distribution', number: '03',
+    heading: 'Make the path from catalog to repeat order simpler.',
+    problem: 'Wholesale teams often work across spreadsheets, changing price lists, customer-specific terms, stock records, quotations, and manual order follow-up.',
+    previewProblem: 'Price lists, customer terms, stock, and repeat orders often sit in separate tools.',
+    previewSolution: 'Bring account-based catalogs, quotations, reorders, and stock data into one business workflow.',
+    previewLink: 'Explore wholesale & distribution solutions',
+    solutions: ['Account-based B2B product catalogs.', 'Customer-specific pricing or quotation workflows where the business rules support them.', 'Reorder tools and order-status portals.', 'Inventory and purchase-data integrations.', 'ETL pipelines that bring spreadsheet and database records into a dependable source of truth.', 'Dashboards for demand, stock, and fulfillment visibility.'],
+    services: ['web-software', 'data-engineering', 'ai-solutions'],
+    qualification: 'AI-assisted automation is considered only for a specific use case with a clear review step.',
+    workflow: ['Price lists', 'Account terms', 'Quotation', 'Repeat order'],
+    cta: 'Discuss your wholesale workflow',
+  },
+  {
+    id: 'manufacturing-industrial', name: 'Manufacturing & Industrial Operations', selector: 'Manufacturing', number: '04',
+    heading: 'Bring validation into the production workflow.',
+    problem: 'Production teams need repeatable checks, clear operator handoffs, and dependable records. Manual proofing and disconnected files can make errors difficult to catch before output.',
+    previewProblem: 'Disconnected files and manual proofing make checks and operator handoffs difficult to repeat.',
+    previewSolution: 'Build operator tools that connect source records, template validation, proofing, and review.',
+    previewLink: 'Explore manufacturing solutions',
+    solutions: ['Desktop or web-based operator tools.', 'Template and label validation workflows.', 'Print-proofing and approval stages.', 'Production data capture and exception reporting.', 'Integrations with order spreadsheets and databases.', 'Quality-control dashboards based on verified process data.'],
+    services: ['web-software', 'data-engineering'],
+    workflow: ['Order records', 'Validation', 'Proof', 'Operator review'],
+    related: [{ projectId: 'industrial-print-proofing', type: 'Desktop application', href: '/projects?project=industrial-print-proofing', note: 'C# / WPF import, validation, proof layout, and operator-review implementation. A production deployment is not established by the available evidence.' }],
+    cta: 'Map a production workflow',
+  },
+  {
+    id: 'logistics-supply-chain', name: 'Logistics & Supply Chain', selector: 'Logistics', number: '05',
+    heading: 'Turn operational events into useful visibility.',
+    problem: 'Orders, inventory movements, dispatch updates, and delivery events often live in separate tools. Teams need a consistent view of what happened and what needs attention.',
+    solutions: ['Order and dispatch workflow applications.', 'Inventory movement and event-ingestion pipelines.', 'Operational dashboards and exception queues.', 'Integrations between existing systems through APIs or scheduled data jobs.', 'Forecasting or prioritization models only when sufficient data and evaluation are available.', 'Role-based views for operations and management.'],
+    services: ['data-engineering', 'web-software', 'mlops'],
+    qualification: 'MLOps applies when the prediction use case, available data, and evaluation justify a model.',
+    workflow: ['Order events', 'Integration', 'Exception queue', 'Operations view'],
+    cta: 'Discuss operational visibility',
+  },
+  {
+    id: 'media-research-publishing', name: 'Media, Research & Publishing', selector: 'Media & Research', number: '06',
+    heading: 'Move from scattered sources to reviewable intelligence.',
+    problem: 'Research and editorial teams spend time collecting sources, extracting facts, comparing claims, and preparing concise briefings under time pressure.',
+    solutions: ['Source ingestion and structured research pipelines.', 'AI-assisted draft briefs and summaries.', 'Claim, date, name, and contradiction flags for human verification.', 'Editorial review and approval interfaces.', 'Searchable archives of reviewed research.', 'Automation that keeps source references visible to the reviewer.'],
+    services: ['ai-solutions', 'data-engineering', 'web-software'],
+    workflow: ['Sources', 'Draft synthesis', 'Human verification', 'Reviewed brief'],
+    related: [{ projectId: 'ai-research-brief-engine', type: 'Portfolio project', href: '/projects?project=ai-research-brief-engine', note: 'Research-input processing and structured draft-brief generation. Proposed editorial checks and approval interfaces are scoped separately; generated material requires human verification.' }],
+    cta: 'Discuss a research workflow',
+  },
+  {
+    id: 'environmental-smart-infrastructure', name: 'Environmental Data & Smart Infrastructure', selector: 'Environment & Infrastructure', number: '07',
+    heading: 'Turn continuous observations into decisions.',
+    problem: 'Environmental and infrastructure systems can produce frequent observations, but the data needs cleaning, consistent storage, evaluation, and clear presentation before it becomes useful.',
+    solutions: ['Scheduled or streaming data-ingestion pipelines.', 'Data validation and feature engineering.', 'Forecasting workflows with reproducible evaluation.', 'Model registration, serving, and monitoring.', 'Dashboards that explain forecasts and operational status.', 'Computer-vision prototypes for a clearly defined infrastructure problem.'],
+    services: ['data-engineering', 'mlops', 'ai-solutions'],
+    workflow: ['Observations', 'Data validation', 'Model evaluation', 'Forecast view'],
+    related: [
+      { projectId: 'aqi-forecasting', type: 'Internship portfolio project', title: 'Three-City AQI Forecasting Platform', href: '/case-studies/aqi-forecasting', note: 'Designed and developed by Syed Abdullah Bin Masood during an AI/ML and MLOps internship at 10Pearls. This is portfolio experience, not a SAM client engagement.' },
+      { projectId: 'smartpark-vision', type: 'Research prototype', href: '/projects?project=smartpark-vision', note: 'Classical computer vision and YOLO parking-occupancy benchmarking in a synthetic-video research workflow.' },
+    ],
+    cta: 'Explore a data or forecasting project',
+  },
+]
+
+export const featuredIndustryIds = ['pharmacies-healthcare-retail', 'wholesale-distribution', 'manufacturing-industrial']
+export const industryContactHref = id => `/?industry=${encodeURIComponent(id)}#contact`
+export const industryServiceHref = id => `/?service=${encodeURIComponent(id)}#service-visualization`
+export const industriesMeta = {
+  title: 'Industries & Solutions | SAM Intelligence Group',
+  description: 'Software, data engineering, MLOps, and applied AI for pharmacy retail, commerce, wholesale, manufacturing, logistics, research, and environmental workflows.',
+  image: '/industries/social-preview.png',
+}
+
+export const industryFromSearch = search => industries.find(industry => industry.id === new URLSearchParams(search).get('industry'))

@@ -1,1 +1,1 @@
-{"buildCommand":"npm run build","outputDirectory":"dist","rewrites":[{"source":"/(.*)","destination":"/index.html"}]}
+{"buildCommand":"npm run build","outputDirectory":"dist","rewrites":[{"source":"/industries","destination":"/industries/index.html"},{"source":"/case-studies","destination":"/case-studies/index.html"},{"source":"/case-studies/lobatse-pharmacy","destination":"/case-studies/lobatse-pharmacy/index.html"},{"source":"/case-studies/aqi-forecasting","destination":"/case-studies/aqi-forecasting/index.html"},{"source":"/(.*)","destination":"/index.html"}]}

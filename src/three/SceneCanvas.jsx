@@ -44,7 +44,7 @@ const getPreferredDpr = () => {
   return Math.min(Math.max(window.devicePixelRatio || 1, 1), 1.5)
 }
 
-export default function SceneCanvas({ ariaLabel, children, fallback, sceneKey }) {
+export default function SceneCanvas({ ariaLabel, children, fallback, sceneKey, visibilityMargin = '160px 0px' }) {
   const hostRef = useRef(null)
   const contextCleanupRef = useRef(null)
   const prefersReducedMotion = Boolean(useReducedMotion())
@@ -78,7 +78,7 @@ export default function SceneCanvas({ ariaLabel, children, fallback, sceneKey })
 
     const observer = new IntersectionObserver(
       ([entry]) => setInView(entry.isIntersecting),
-      { rootMargin: '160px 0px', threshold: 0.01 },
+      { rootMargin: visibilityMargin, threshold: 0.01 },
     )
     observer.observe(host)
 
@@ -86,7 +86,7 @@ export default function SceneCanvas({ ariaLabel, children, fallback, sceneKey })
       observer.disconnect()
       document.removeEventListener('visibilitychange', onVisibilityChange)
     }
-  }, [])
+  }, [visibilityMargin])
 
   useEffect(() => () => contextCleanupRef.current?.(), [])
 

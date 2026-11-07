@@ -4,7 +4,7 @@ import { useReducedMotion } from 'framer-motion'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import samLogo from '../../SAM_Full_Transparent_Cropped.png'
-import { brand, heroProof } from '../data/agencyData'
+import { brand } from '../data/agencyData'
 import IntelligenceCanvas from './IntelligenceCanvas'
 
 if (typeof window !== 'undefined') gsap.registerPlugin(ScrollTrigger)
@@ -95,15 +95,6 @@ export default function Hero() {
               <li key={label}><Icon aria-hidden="true" /><span>{label}</span></li>
             ))}
           </ul>
-        </div>
-
-        <div className="hero__proof" aria-label="SAM Intelligence Group at a glance">
-          {heroProof.map((item) => (
-            <div key={item.label}>
-              <strong>{item.value}</strong>
-              <span>{item.label}</span>
-            </div>
-          ))}
         </div>
       </div>
 

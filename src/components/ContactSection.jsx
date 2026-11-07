@@ -1,12 +1,24 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ArrowUpRight, Mail, Send } from 'lucide-react'
 import samLogo from '../../SAM_Full_Transparent_Cropped.png'
-import { brand, serviceOptions } from '../data/agencyData'
+import { brand, serviceOptions, servicePillars } from '../data/agencyData'
+import { industries, industryFromSearch } from '../data/industriesData'
+import { buildContactEmail } from '../utils/contactBrief'
 
 const clearValidity = (event) => event.currentTarget.setCustomValidity('')
 
 export default function ContactSection() {
   const [message, setMessage] = useState('')
+  const [initialIndustry] = useState(() => industryFromSearch(window.location.search))
+  const [industryId, setIndustryId] = useState(initialIndustry?.id || '')
+  const industry = industries.find(item => item.id === industryId)
+  const sectionRef = useRef(null)
+
+  useEffect(() => {
+    if (window.location.hash !== '#contact') return undefined
+    const frame = requestAnimationFrame(() => sectionRef.current?.scrollIntoView({ block: 'start' }))
+    return () => cancelAnimationFrame(frame)
+  }, [])
 
   const prepareBrief = (event) => {
     event.preventDefault()
@@ -19,25 +31,13 @@ export default function ContactSection() {
     if (!form.reportValidity()) return
 
     const data = new FormData(form)
-    const company = data.get('company') || 'Not provided'
-    const service = data.get('service') || 'General inquiry'
-    const subject = encodeURIComponent(`Project conversation — ${service} — ${company}`)
-    const body = encodeURIComponent([
-      `Name: ${data.get('name')}`,
-      `Company / organization: ${company}`,
-      `Reply email: ${data.get('email')}`,
-      `Area of interest: ${service}`,
-      '',
-      'Project context:',
-      data.get('scope'),
-    ].join('\n'))
 
     setMessage('Your brief is ready. Complete the handoff in the email application that opens next.')
-    window.location.href = `mailto:${brand.email}?subject=${subject}&body=${body}`
+    window.location.href = buildContactEmail(data, brand.email)
   }
 
   return (
-    <section className="contact section" id="contact" aria-labelledby="contact-title">
+    <section className="contact section" id="contact" aria-labelledby="contact-title" ref={sectionRef}>
       <div className="contact__glow" aria-hidden="true" />
       <div className="contact__layout shell">
         <div className="contact__intro">
@@ -64,7 +64,9 @@ export default function ContactSection() {
             <label><span>Name</span><input name="name" type="text" autoComplete="name" minLength="2" placeholder="Full name" required onInput={clearValidity} /></label>
             <label><span>Company / organization</span><input name="company" type="text" autoComplete="organization" minLength="2" placeholder="Organization" required /></label>
             <label className="contact-form__wide"><span>Work email</span><input name="email" type="email" autoComplete="email" inputMode="email" placeholder="name@company.com" required /></label>
-            <label className="contact-form__wide"><span>Area of interest</span><select name="service" defaultValue="" required><option value="" disabled>Select a service</option>{serviceOptions.map((option) => <option key={option}>{option}</option>)}</select></label>
+            <label className="contact-form__wide"><span>Industry / workflow</span><select name="industry" value={industryId} onChange={event => setIndustryId(event.target.value)}><option value="">Choose an industry (optional)</option>{industries.map(item => <option value={item.id} key={item.id}>{item.name}</option>)}</select></label>
+            {industry && <p className="contact-form__industry-note contact-form__wide" aria-live="polite">Inquiry context: <strong>{industry.name}</strong>. Tell us about your current process below; you can change either selection.</p>}
+            <label className="contact-form__wide"><span>Area of interest</span><select name="service" defaultValue={initialIndustry ? servicePillars.find(item => item.id === initialIndustry.services[0]).title : ''} required><option value="" disabled>Select a service</option>{serviceOptions.map((option) => <option key={option}>{option}</option>)}</select></label>
             <label className="contact-form__wide"><span>Project context</span><textarea name="scope" rows="6" minLength="40" placeholder="What exists today, what needs to change, and which constraints should shape the solution?" required onInput={clearValidity} /></label>
           </div>
           <button className="button button--primary contact-form__submit" type="submit">Open prepared email <Send aria-hidden="true" /></button>

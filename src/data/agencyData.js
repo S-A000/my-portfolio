@@ -1,3 +1,5 @@
+import { pastProjects } from './projectsData'
+
 export const brand = {
   name: 'SAM Intelligence Group',
   shortName: 'SAM',
@@ -8,13 +10,15 @@ export const brand = {
 export const navigation = [
   { label: 'Home', href: '/#home', route: '/' },
   { label: 'Services', href: '/#services', section: 'services' },
+  { label: 'Industries', href: '/industries', route: '/industries' },
+  { label: 'Case Studies', href: '/case-studies', route: '/case-studies' },
   { label: 'Work / Projects', href: '/projects', route: '/projects' },
   { label: 'About Us', href: '/about', route: '/about' },
   { label: 'Contact', href: '/#contact', section: 'contact' },
 ]
 
 export const heroProof = [
-  { value: '18', label: 'documented builds and research projects' },
+  { value: String(pastProjects.length), label: 'documented builds and research projects' },
   { value: '04', label: 'connected engineering practices' },
   { value: '05', label: 'delivery stages from discovery to iteration' },
 ]

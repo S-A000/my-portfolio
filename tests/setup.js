@@ -27,4 +27,5 @@ window.matchMedia = (query) => ({
   dispatchEvent() { return false },
 })
 HTMLElement.prototype.scrollBy = () => {}
+HTMLElement.prototype.scrollIntoView = () => {}
 HTMLCanvasElement.prototype.getContext = () => null

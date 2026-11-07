@@ -22,6 +22,12 @@ const iconTypes = {
   wpf: 'wpf',
   docker: 'docker',
   'github-actions': 'githubactions',
+  'asp-net-core-mvc': 'dotnet',
+  'ef-core': 'dotnet',
+  streamlit: 'streamlit',
+  'amazon-rds': 'rds',
+  'aws-ec2': 'ec2',
+  'amazon-s3': 's3',
 }
 
 const slugify = (name) => name.toLowerCase()
@@ -31,6 +37,10 @@ const slugify = (name) => name.toLowerCase()
   .replace(/(^-|-$)/g, '')
 
 function BrandMark({ type }) {
+  if (type === 'streamlit') return <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#ff4b4b" d="m3 10 8 4 5-8 5 8 8-4-4 15H7Z"/><path fill="#ff8c8c" d="m3 10 13 9L29 10l-4 15H7Z"/></svg>
+  if (type === 'ec2') return <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="6" y="6" width="20" height="20" rx="2" fill="#ed7100"/><rect x="11" y="11" width="10" height="10" fill="none" stroke="white" strokeWidth="1.5"/><path d="M10 2v4m6-4v4m6-4v4M10 26v4m6-4v4m6-4v4M2 10h4m-4 6h4m-4 6h4m20-12h4m-4 6h4m-4 6h4" stroke="#ed7100" strokeWidth="2"/></svg>
+  if (type === 'rds') return <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#527fff" d="m16 2 12 6v16l-12 6-12-6V8Z"/><ellipse cx="16" cy="10" rx="7" ry="3" fill="none" stroke="white" strokeWidth="1.5"/><path d="M9 10v11c0 4 14 4 14 0V10M9 16c0 4 14 4 14 0" fill="none" stroke="white" strokeWidth="1.5"/></svg>
+  if (type === 's3') return <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#569a31" d="m5 5 11-3 11 3-3 22-8 3-8-3Z"/><ellipse cx="16" cy="6" rx="11" ry="3.5" fill="#75b643"/><path d="M11 13h10l-1 10-4 2-4-2Z" fill="none" stroke="white" strokeWidth="1.5"/></svg>
   if (type === 'python') return <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#3776ab" d="M15.8 3.2c-6 0-5.6 2.6-5.6 2.6v3.1h5.7v1H8s-3.8-.4-3.8 5.6 3.3 5.8 3.3 5.8h2v-2.8s-.1-3.3 3.3-3.3h5.6s3.1.1 3.1-3V6.3s.5-3.1-5.7-3.1Zm-3.2 1.9a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"/><path fill="#ffd43b" d="M16.2 28.8c6 0 5.6-2.6 5.6-2.6v-3.1h-5.7v-1H24s3.8.4 3.8-5.6-3.3-5.8-3.3-5.8h-2v2.8s.1 3.3-3.3 3.3h-5.6s-3.1-.1-3.1 3v5.9s-.5 3.1 5.7 3.1Zm3.2-1.9a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"/></svg>
   if (type === 'react') return <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="2.7" fill="#61dafb"/><g fill="none" stroke="#61dafb" strokeWidth="1.5"><ellipse cx="16" cy="16" rx="13" ry="5"/><ellipse cx="16" cy="16" rx="13" ry="5" transform="rotate(60 16 16)"/><ellipse cx="16" cy="16" rx="13" ry="5" transform="rotate(120 16 16)"/></g></svg>
   if (type === 'javascript') return <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#f7df1e" d="M3 3h26v26H3z"/><path fill="#111827" d="M17 24.4c.6 1.1 1.4 1.9 2.8 1.9 1.2 0 1.9-.6 1.9-1.4 0-1-.8-1.3-2-1.9l-.7-.3c-2-.9-3.4-2-3.4-4.4 0-2.2 1.7-3.8 4.3-3.8 1.9 0 3.2.7 4.2 2.4l-2.3 1.5c-.5-.9-1.1-1.2-1.9-1.2-.9 0-1.4.6-1.4 1.2 0 .9.6 1.2 1.8 1.8l.7.3c2.4 1 3.7 2.1 3.7 4.5 0 2.6-2 4-4.8 4-2.7 0-4.4-1.3-5.2-3.1Zm-10 .3c.5.9 1 1.6 2.1 1.6s1.7-.4 1.7-2V14.7h3v9.6c0 3.1-1.8 4.5-4.5 4.5-2.4 0-3.8-1.2-4.5-2.8Z"/></svg>

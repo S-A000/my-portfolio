@@ -9,6 +9,8 @@ import Hero from '../components/Hero'
 import SelectedWorkSection from '../components/SelectedWorkSection'
 import ServiceShowcase from '../components/ServiceShowcase'
 import usePageMeta from '../hooks/usePageMeta'
+import CaseStudiesSection from '../components/CaseStudiesSection'
+import IndustriesSection from '../components/IndustriesSection'
 
 if (typeof window !== 'undefined') gsap.registerPlugin(ScrollTrigger)
 
@@ -73,6 +75,8 @@ export default function HomePage() {
     <div className="home-experience" ref={homeRef}>
       <Hero />
       <ServiceShowcase />
+      <IndustriesSection />
+      <CaseStudiesSection />
       <ApproachSection />
       <SelectedWorkSection />
       <CompanyPreview />

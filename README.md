@@ -1,15 +1,16 @@
 # SAM Intelligence Group — Company Website
 
-The official front-end for SAM Intelligence Group, a founder-led technology practice working across data engineering, MLOps, custom software, applied AI, and supporting cybersecurity research.
+The official front-end for SAM Intelligence Group, working across Data Engineering, MLOps, Web Development & Custom Software, and AI Solutions.
 
-The site uses a dark, systems-led visual language derived from the supplied SAM references. It includes an animated but lightweight canvas hero, four original service scenes, a dedicated About page, and the complete 18-project archive with filters, direct links, and accessible project-detail dialogs.
+The site uses the supplied SAM navy, teal, orange, and warm-white visual language. It includes the animated hero, four original service scenes, a seven-industry solutions directory, two complete case studies, a company About page, and the 19-project archive with accessible project-detail dialogs.
 
 ## Tech stack
 
 - React 19 and Vite 7
 - Framer Motion
 - Lucide React
-- Native Canvas 2D for the hero field
+- Three.js, React Three Fiber, and Drei for system scenes
+- Lightweight SVG workflow diagrams for industries
 - Responsive CSS
 - ESLint
 
@@ -26,25 +27,34 @@ Vite prints the local preview address after startup.
 
 ## Routes
 
-- `/` — home, service showcase, approach, selected work, founder preview, and contact
-- `/about` — company positioning, founder profile, operating approach, and technical strengths
+- `/` — home, services, Industries & Solutions, Selected Case Studies, approach, work, company preview, and contact
+- `/industries` — seven industry workflows, prospective solutions, related project evidence, and contextual contact paths
+- `/industries#<industry-id>` — a specific industry section
+- `/case-studies` — case-study index
+- `/case-studies/lobatse-pharmacy` — pharmacy commerce case study
+- `/case-studies/aqi-forecasting` — AQI internship portfolio case study
+- `/about` — company positioning, operating approach, and technical strengths
 - `/projects` — complete filterable project library
 - `/projects?project=<id>` — directly opens a specific project detail
 
 `vercel.json` provides the SPA fallback required for direct navigation to these routes.
+
+Industry CTAs use `/?industry=<industry-id>#contact`. The optional industry selection and suggested service remain editable, and the prepared local email draft includes the industry context. The site does not submit form data to a server.
 
 ## Quality checks
 
 ```bash
 pnpm run lint
 pnpm run build
+pnpm test --run
+node scripts/verify-case-build.mjs
 ```
 
 The production output is written to `dist/`.
 
 ## Content architecture
 
-Public company content is centralized in `src/data/agencyData.js`. The preserved portfolio inventory, project maturity labels, gallery media, and verified source links live in `src/data/projectsData.js`.
+Public company content is centralized in `src/data/agencyData.js`. Industry copy, service mappings, evidence links, and contact-context IDs live in `src/data/industriesData.js`. The portfolio inventory and maturity labels live in `src/data/projectsData.js`; case-study narratives live in `src/data/caseStudiesData.js`. The build emits route-specific static metadata for industries and case studies.
 
 ## Deployment
 

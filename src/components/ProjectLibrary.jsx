@@ -104,6 +104,7 @@ function ProjectCard({ project, index, onOpen }) {
           {project.tech.slice(0, 4).map((item) => <li key={item}><TechnologyBadge name={item} compact /></li>)}
         </ul>
         <div className="project-card__footer">
+          {project.caseStudy && <a className="text-link" href={project.caseStudy}>Read case study <ArrowRight aria-hidden="true" /></a>}
           <ProjectLinks project={project} className="project-card__links" />
           <button ref={buttonRef} type="button" onClick={() => onOpen(project, buttonRef.current)} aria-haspopup="dialog">
             View details <ArrowRight aria-hidden="true" />
@@ -189,6 +190,7 @@ function ProjectDialog({ project, onClose }) {
                 <h2 id="project-dialog-title">{project.title}</h2>
                 <p id="project-dialog-summary">{project.overview || project.summary}</p>
                 <ProjectLinks project={project} className="project-dialog__links" />
+                {project.caseStudy && <a className="button button--primary" href={project.caseStudy}>Read full case study <ArrowRight aria-hidden="true" /></a>}
               </div>
             </div>
 
@@ -267,7 +269,7 @@ export default function ProjectLibrary() {
               <p className="eyebrow"><span /> Project library</p>
               <h2 id="project-library-title">Production work, tools, prototypes, and research.</h2>
             </div>
-            <p>Filter the complete 18-project archive, then open any project for its problem, workflow, contribution, technology, and available supporting material.</p>
+            <p>Filter the complete {pastProjects.length}-project archive, then open any project for its problem, workflow, contribution, technology, and available supporting material.</p>
           </header>
 
           <div className="project-library__toolbar">
