@@ -86,10 +86,12 @@ describe('SAM Intelligence Group website', () => {
 
   afterEach(() => {
     vi.restoreAllMocks()
+    vi.unstubAllEnvs()
   })
 
   it('uses contact@samintelligencegroup.com globally and validates direct serverless brief submission', async () => {
     const user = userEvent.setup()
+    vi.stubEnv('VITE_WEB3FORMS_ACCESS_KEY', 'test-web3forms-key')
     let resolveFetch
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(
       () => new Promise((resolve) => { resolveFetch = resolve }),
@@ -118,18 +120,20 @@ describe('SAM Intelligence Group website', () => {
     await user.click(screen.getByRole('button', { name: 'Send project brief' }))
     expect(screen.getByRole('button', { name: /sending brief/i })).toBeDisabled()
     expect(fetchSpy).toHaveBeenCalledWith(
-      '/api/contact',
+      'https://api.web3forms.com/submit',
       expect.objectContaining({ method: 'POST' }),
     )
 
     const [, requestOptions] = fetchSpy.mock.calls[0]
     const payload = JSON.parse(requestOptions.body)
     expect(payload).toMatchObject({
+      access_key: 'test-web3forms-key',
+      from_name: 'SAM Intelligence Group Web Portal',
       name: 'Jane Doe',
       email: 'jane@acme.example',
       industry: 'MLOps',
+      subject: 'New Project Brief from Jane Doe [MLOps]',
     })
-    expect(payload).not.toHaveProperty('access_key')
     expect(payload.message).toContain('Acme Labs')
 
     resolveFetch({
@@ -146,9 +150,35 @@ describe('SAM Intelligence Group website', () => {
     expect(screen.getByLabelText('Name')).toHaveValue('')
   })
 
+  it('shows a clear error and preserves data when VITE_WEB3FORMS_ACCESS_KEY is missing', async () => {
+    const user = userEvent.setup()
+    vi.stubEnv('VITE_WEB3FORMS_ACCESS_KEY', '')
+    const fetchSpy = vi.spyOn(globalThis, 'fetch')
+
+    renderRoute()
+    await user.type(screen.getByLabelText('Name'), 'Sara Ali')
+    await user.type(screen.getByLabelText('Company / organization'), 'Beta Corp')
+    await user.type(screen.getByLabelText('Work email'), 'sara@beta.example')
+    await user.selectOptions(screen.getByLabelText('Area of interest'), 'AI Solutions')
+    await user.type(
+      screen.getByLabelText('Project context'),
+      'Building a document extraction and human review workflow for our analysts.',
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Send project brief' }))
+
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveTextContent(/VITE_WEB3FORMS_ACCESS_KEY/i)
+    expect(fetchSpy).not.toHaveBeenCalled()
+    expect(screen.getByLabelText('Name')).toHaveValue('Sara Ali')
+    expect(within(alert).getByRole('button', { name: /copy brief & email/i })).toBeInTheDocument()
+  })
+
   it('retains form data and offers a one-click Copy Brief & Email fallback on submission failure', async () => {
     const user = userEvent.setup()
+    vi.stubEnv('VITE_WEB3FORMS_ACCESS_KEY', 'test-web3forms-key')
     vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('Network offline'))
+    vi.spyOn(console, 'error').mockImplementation(() => {})
     const writeText = vi.fn().mockResolvedValue(undefined)
     Object.defineProperty(navigator, 'clipboard', {
       configurable: true,

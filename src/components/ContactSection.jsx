@@ -18,7 +18,7 @@ import {
   formatContactBrief,
 } from '../utils/contactBrief'
 
-const CONTACT_ENDPOINT = '/api/contact'
+const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit'
 
 const clearValidity = (event) => event.currentTarget.setCustomValidity('')
 
@@ -68,11 +68,11 @@ export default function ContactSection() {
     return () => cancelAnimationFrame(frame)
   }, [])
 
-  const submitBrief = async (event) => {
-    event.preventDefault()
+  const handleSubmit = async (e) => {
+    e.preventDefault()
     if (isSubmitting) return
 
-    const form = event.currentTarget
+    const form = e.currentTarget
     const nameInput = form.elements.namedItem('name')
     const companyInput = form.elements.namedItem('company')
     const scopeInput = form.elements.namedItem('scope')
@@ -86,43 +86,52 @@ export default function ContactSection() {
     const brief = formatContactBrief(data)
     const clipboardText = buildBriefClipboardText(data, brand.email)
     const mailtoHref = buildContactEmail(data, brand.email)
+    const selectedIndustry = brief.industry?.name || ''
 
     setFallbackBrief({ clipboardText, mailtoHref })
     setStatus('submitting')
     setErrorMessage('')
     setCopied(false)
 
+    const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY
+    if (!accessKey) {
+      setStatus('error')
+      setErrorMessage('Web3Forms access key is missing. Please set VITE_WEB3FORMS_ACCESS_KEY in your environment variables.')
+      return
+    }
+
+    const payload = {
+      access_key: accessKey,
+      subject: `New Project Brief from ${brief.name || 'Client'} [${selectedIndustry || brief.service || 'General'}]`,
+      from_name: 'SAM Intelligence Group Web Portal',
+      name: brief.name,
+      email: brief.email,
+      industry: selectedIndustry || brief.service || 'General Inquiry',
+      message: brief.message,
+    }
+
     try {
-      const response = await fetch(CONTACT_ENDPOINT, {
+      const response = await fetch(WEB3FORMS_ENDPOINT, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
         },
-        body: JSON.stringify({
-          name: brief.name,
-          email: brief.email,
-          industry: brief.industryLabel,
-          message: brief.message,
-        }),
+        body: JSON.stringify(payload),
       })
 
-      const result = await response.json().catch(() => null)
-      if (!response.ok || !result?.success) {
-        throw new Error(
-          result?.error || result?.message || `Unable to deliver your brief right now. Please copy your brief below or email ${brand.email}.`,
-        )
-      }
+      const result = await response.json().catch(() => ({}))
 
-      setStatus('success')
-      setFallbackBrief(null)
-    } catch (error) {
+      if (response.ok !== false && result.success) {
+        setStatus('success')
+        setFallbackBrief(null)
+      } else {
+        throw new Error(result.message || 'Submission failed. Please try again.')
+      }
+    } catch (err) {
+      console.error('Web3Forms submission error:', err)
+      setErrorMessage(err.message || 'Unable to deliver your brief automatically.')
       setStatus('error')
-      setErrorMessage(
-        error instanceof Error && error.message
-          ? error.message
-          : `Unable to deliver your brief right now. Please copy your brief below or email ${brand.email}.`,
-      )
     }
   }
 
@@ -190,7 +199,7 @@ export default function ContactSection() {
               </div>
             </div>
           ) : (
-            <form key={formKey} onSubmit={submitBrief} aria-busy={isSubmitting}>
+            <form key={formKey} onSubmit={handleSubmit} aria-busy={isSubmitting}>
               <header>
                 <div><span>PROJECT BRIEF / 01</span><h3>Prepare the conversation</h3></div>
                 <small><i /> Sends directly</small>
