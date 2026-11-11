@@ -14,7 +14,7 @@ The site uses the supplied SAM navy, teal, orange, and warm-white visual languag
 - Responsive CSS
 - ESLint
 
-No site database is required. The contact form submits directly to the Vercel Serverless Function at `/api/contact` using Nodemailer and SMTP environment variables (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `CONTACT_RECEIVER_EMAIL`, documented in `.env.example`), clearly discloses that no form data is stored by the site, and provides a one-click clipboard & email fallback if delivery fails.
+No site database is required. The contact form submits directly to the Vercel Serverless Function at `/api/contact` using the Resend API (`RESEND_API_KEY`, documented in `.env.example`), clearly discloses that no form data is stored by the site, and provides a one-click clipboard & email fallback if delivery fails.
 
 ## Setup
 
