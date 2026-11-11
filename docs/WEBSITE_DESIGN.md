@@ -284,7 +284,7 @@ No founder portrait/story section is mounted. `aboutUs.principles` exists in dat
 
 Form order: Name; Company/organization; Work email; optional Industry/workflow; optional visible inquiry-context note; required Area of interest; required Project context; Open prepared email; fine print; live status message. Name and company require at least 2 characters; email uses native email validation; project context requires at least 40 characters, with extra trimmed-length checks for name/scope. Fields have appropriate name/organization/email autocomplete. Name/company share the first desktop row; the remaining controls span both columns. Mobile uses one column and narrower padding.
 
-[contactBrief.js](../src/utils/contactBrief.js) constructs a URL-encoded `mailto:abinemasood814@gmail.com` draft with service/company/industry context and the entered details. Valid submission sets the polite status “Your brief is ready. Complete the handoff in the email application that opens next.” and opens the email handler. It does not store data, POST to a server, prove email delivery, or automatically send a message. The final handoff depends on the user's installed email application; sending was not exercised during documentation.
+[contactBrief.js](../src/utils/contactBrief.js) constructs a URL-encoded `mailto:contact@samintelligencegroup.com` draft with service/company/industry context and the entered details. Valid submission sets the polite status “Your brief is ready. Complete the handoff in the email application that opens next.” and opens the email handler. It does not store data, POST to a server, prove email delivery, or automatically send a message. The final handoff depends on the user's installed email application; sending was not exercised during documentation.
 
 ### Footer
 
@@ -551,7 +551,7 @@ Additional root logo files are listed in the logo table. [design-references](../
 | Project detail | Nineteen `/projects?project=<id>` destinations above |
 | About shared approach | `/about#approach` exists because ApproachSection is reused |
 | Skip link | Current page `#main-content` |
-| Direct contact | `mailto:abinemasood814@gmail.com` |
+| Direct contact | `mailto:contact@samintelligencegroup.com` |
 | Rendered project resource | `https://pypi.org/project/sam_eda/`; external reachability not verified |
 | Full AQI gallery images | Corresponding `/projects/*.webp` URL in a new tab |
 

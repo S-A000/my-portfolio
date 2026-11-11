@@ -1103,7 +1103,7 @@ main {
   box-shadow: 0 34px 90px rgba(0, 0, 0, 0.26);
 }
 
-.contact-form > header {
+.contact-form header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1112,19 +1112,24 @@ main {
   padding: 26px 30px;
 }
 
-.contact-form > header span {
+.contact-form header span {
   color: var(--orange);
   font-family: "Courier New", monospace;
   font-size: 0.64rem;
   letter-spacing: 0.1em;
 }
 
-.contact-form > header h3 {
+.contact-form header h3,
+.contact-form__header-title {
   margin: 4px 0 0;
+  font-family: Poppins, Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  line-height: 1.04;
 }
 
-.contact-form > header small {
+.contact-form header small {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1132,7 +1137,7 @@ main {
   font-size: 0.68rem;
 }
 
-.contact-form > header small i {
+.contact-form header small i {
   width: 7px;
   height: 7px;
   border-radius: 50%;
@@ -1200,9 +1205,19 @@ main {
   cursor: pointer;
 }
 
+.contact-form__submit:disabled {
+  cursor: wait;
+  opacity: 0.72;
+  transform: none;
+}
+
+.contact-form__spinner {
+  animation: contact-spin 0.9s linear infinite;
+}
+
 .contact-form__fineprint,
 .contact-form__message {
-  margin: 14px 30px 0;
+  margin: 14px 30px 26px;
   color: #758d98;
   font-size: 0.7rem;
 }
@@ -1211,6 +1226,112 @@ main {
   min-height: 42px;
   margin-bottom: 14px;
   color: var(--cyan);
+}
+
+.contact-form__error {
+  margin: 0 30px 18px;
+  border: 1px solid rgba(255, 107, 26, 0.55);
+  border-left: 3px solid var(--orange);
+  padding: 18px 20px;
+  background: rgba(58, 19, 12, 0.48);
+}
+
+.contact-form__error-copy {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.contact-form__error-copy svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: var(--orange-soft);
+}
+
+.contact-form__error-copy strong {
+  display: block;
+  color: var(--warm-white);
+  font-size: 0.84rem;
+}
+
+.contact-form__error-copy p {
+  margin: 4px 0 0;
+  color: #d6c5bc;
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+
+.contact-form__error-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 20px;
+  margin-top: 14px;
+}
+
+.contact-form__copy-btn {
+  min-height: 44px;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+.contact-form__mailto-fallback {
+  font-size: 0.75rem;
+}
+
+.contact-form__copy-status {
+  margin: 10px 0 0;
+  color: var(--cyan);
+  font-size: 0.74rem;
+}
+
+.contact-form__success-body {
+  display: grid;
+  justify-items: start;
+  gap: 16px;
+  padding: clamp(36px, 5vw, 58px) 30px;
+}
+
+.contact-form__success-icon {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  border: 1px solid rgba(39, 210, 228, 0.45);
+  background: rgba(39, 210, 228, 0.1);
+  color: var(--cyan);
+}
+
+.contact-form__success-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.contact-form__success-body h3 {
+  margin: 4px 0 0;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+}
+
+.contact-form__success-body p {
+  max-width: 52ch;
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 0.96rem;
+  line-height: 1.75;
+}
+
+.contact-form__success-body p a {
+  color: var(--cyan);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@keyframes contact-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Footer */
@@ -2383,9 +2504,10 @@ main {
     flex-direction: column;
   }
 
-  .contact-form > header {
+  .contact-form header {
     align-items: flex-start;
     flex-direction: column;
+    padding: 22px 20px;
   }
 
   .contact-form__grid {
@@ -2400,6 +2522,15 @@ main {
   .contact-form__submit {
     width: calc(100% - 40px);
     margin-inline: 20px;
+  }
+
+  .contact-form__error {
+    margin-inline: 20px;
+    padding: 16px;
+  }
+
+  .contact-form__success-body {
+    padding: 28px 20px;
   }
 
   .contact-form__fineprint,
@@ -2525,13 +2656,14 @@ main {
 @media (forced-colors: active) {
   .eyebrow > span,
   .contact__note > i,
-  .contact-form > header small i {
+  .contact-form header small i {
     background: CanvasText;
   }
 
   .button,
   .project-card,
   .contact-form,
+  .contact-form__error,
   .founder-preview__panel {
     border: 1px solid CanvasText;
   }

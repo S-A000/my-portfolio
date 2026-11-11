@@ -4,7 +4,7 @@ export const brand = {
   name: 'SAM Intelligence Group',
   shortName: 'SAM',
   tagline: 'Engineering data, intelligent systems, and custom software.',
-  email: 'abinemasood814@gmail.com',
+  email: 'contact@samintelligencegroup.com',
 }
 
 export const navigation = [

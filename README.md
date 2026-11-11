@@ -14,7 +14,7 @@ The site uses the supplied SAM navy, teal, orange, and warm-white visual languag
 - Responsive CSS
 - ESLint
 
-No backend, database, runtime API, or environment variables are required. The contact form prepares a prefilled message in the visitor's local email application and clearly discloses that no form data is stored by the site.
+No site database is required. The contact form submits directly to the Vercel Serverless Function at `/api/contact` using Nodemailer and SMTP environment variables (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `CONTACT_RECEIVER_EMAIL`, documented in `.env.example`), clearly discloses that no form data is stored by the site, and provides a one-click clipboard & email fallback if delivery fails.
 
 ## Setup
 
@@ -39,7 +39,7 @@ Vite prints the local preview address after startup.
 
 `vercel.json` provides the SPA fallback required for direct navigation to these routes.
 
-Industry CTAs use `/?industry=<industry-id>#contact`. The optional industry selection and suggested service remain editable, and the prepared local email draft includes the industry context. The site does not submit form data to a server.
+Industry CTAs use `/?industry=<industry-id>#contact`. The optional industry selection and suggested service remain editable, and the submitted project brief (plus fallback clipboard copy) includes the industry context.
 
 ## Quality checks
 

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import App from '../src/App'
@@ -84,15 +84,98 @@ describe('SAM Intelligence Group website', () => {
     expect(document.title).toBe('About Us | SAM Intelligence Group')
   })
 
-  it('makes the local email handoff and validation explicit', () => {
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  it('uses contact@samintelligencegroup.com globally and validates direct serverless brief submission', async () => {
+    const user = userEvent.setup()
+    let resolveFetch
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(
+      () => new Promise((resolve) => { resolveFetch = resolve }),
+    )
+
     renderRoute()
+    expect(screen.getAllByRole('link', { name: /contact@samintelligencegroup\.com/i })).toHaveLength(2)
+    expect(screen.queryByText(/abinemasood814@gmail\.com/i)).not.toBeInTheDocument()
+
     expect(screen.getByLabelText('Name')).toBeRequired()
     expect(screen.getByLabelText('Company / organization')).toBeRequired()
     expect(screen.getByLabelText('Work email')).toHaveAttribute('type', 'email')
     expect(screen.getByLabelText('Area of interest')).toBeRequired()
     expect(screen.getByLabelText('Project context')).toHaveAttribute('minlength', '40')
-    expect(screen.getByText(/only opens a prefilled draft/i)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Open prepared email' })).toBeInTheDocument()
+    expect(screen.getByText(/without saving form data on this site/i)).toBeInTheDocument()
+
+    await user.type(screen.getByLabelText('Name'), 'Jane Doe')
+    await user.type(screen.getByLabelText('Company / organization'), 'Acme Labs')
+    await user.type(screen.getByLabelText('Work email'), 'jane@acme.example')
+    await user.selectOptions(screen.getByLabelText('Area of interest'), 'MLOps')
+    await user.type(
+      screen.getByLabelText('Project context'),
+      'We need a reproducible training and model-serving pipeline for hourly telemetry.',
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Send project brief' }))
+    expect(screen.getByRole('button', { name: /sending brief/i })).toBeDisabled()
+    expect(fetchSpy).toHaveBeenCalledWith(
+      '/api/contact',
+      expect.objectContaining({ method: 'POST' }),
+    )
+
+    const [, requestOptions] = fetchSpy.mock.calls[0]
+    const payload = JSON.parse(requestOptions.body)
+    expect(payload).toMatchObject({
+      name: 'Jane Doe',
+      email: 'jane@acme.example',
+      industry: 'MLOps',
+    })
+    expect(payload).not.toHaveProperty('access_key')
+    expect(payload.message).toContain('Acme Labs')
+
+    resolveFetch({
+      ok: true,
+      json: async () => ({ success: true }),
+    })
+
+    expect(await screen.findByRole('heading', { name: 'Brief Sent Successfully!' })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: 'Success checkmark' })).toBeInTheDocument()
+    expect(screen.getByText(/get back to you at/i)).toHaveTextContent('contact@samintelligencegroup.com')
+
+    await user.click(screen.getByRole('button', { name: 'Send another message' }))
+    expect(screen.getByRole('button', { name: 'Send project brief' })).toBeEnabled()
+    expect(screen.getByLabelText('Name')).toHaveValue('')
+  })
+
+  it('retains form data and offers a one-click Copy Brief & Email fallback on submission failure', async () => {
+    const user = userEvent.setup()
+    vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('Network offline'))
+    const writeText = vi.fn().mockResolvedValue(undefined)
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText },
+    })
+
+    renderRoute()
+    await user.type(screen.getByLabelText('Name'), 'Ali Khan')
+    await user.type(screen.getByLabelText('Company / organization'), 'Northwind')
+    await user.type(screen.getByLabelText('Work email'), 'ali@northwind.example')
+    await user.selectOptions(screen.getByLabelText('Area of interest'), 'Data Engineering')
+    await user.type(
+      screen.getByLabelText('Project context'),
+      'Migrating SQL Server reporting pipelines and batch ETL jobs to BigQuery.',
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Send project brief' }))
+
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveTextContent(/network offline/i)
+    expect(screen.getByLabelText('Name')).toHaveValue('Ali Khan')
+
+    await user.click(within(alert).getByRole('button', { name: /copy brief & email/i }))
+    expect(writeText).toHaveBeenCalledTimes(1)
+    expect(writeText.mock.calls[0][0]).toContain('contact@samintelligencegroup.com')
+    expect(writeText.mock.calls[0][0]).toContain('Migrating SQL Server reporting pipelines')
+    expect(await screen.findByText(/copied your brief and contact@samintelligencegroup\.com to clipboard/i)).toBeInTheDocument()
   })
 
   it('does not display unsupported hardening or deployment claims', () => {

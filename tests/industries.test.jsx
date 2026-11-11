@@ -6,7 +6,7 @@ import ContactSection from '../src/components/ContactSection'
 import { industries, industryContactHref, industryServiceHref } from '../src/data/industriesData'
 import { servicePillars } from '../src/data/agencyData'
 import { pastProjects } from '../src/data/projectsData'
-import { buildContactEmail } from '../src/utils/contactBrief'
+import { buildBriefClipboardText, buildContactEmail, formatContactBrief } from '../src/utils/contactBrief'
 
 const route = path => { window.history.replaceState({}, '', path); return render(<App/>) }
 
@@ -71,7 +71,7 @@ describe('Industries and solutions',()=>{
     await user.selectOptions(screen.getByLabelText('Area of interest'),'General Inquiry')
     expect(screen.getByLabelText('Area of interest')).toHaveValue('General Inquiry')
     expect(screen.getByLabelText('Industry / workflow')).toHaveValue(industry.id)
-    expect(screen.getByText(/only opens a prefilled draft/)).toBeInTheDocument()
+    expect(screen.getByText(/without saving form data on this site/i)).toBeInTheDocument()
   })
   it('ignores unrecognized context values and keeps the normal contact form validation',()=>{
     window.history.replaceState({},'','/?industry=unrecognized#contact')
@@ -91,5 +91,10 @@ describe('Industries and solutions',()=>{
     expect(draft.searchParams.get('body')).toContain(data.get('scope'))
     data.set('industry','unrecognized')
     expect(new URL(buildContactEmail(data,'example@example.com')).searchParams.get('body')).not.toContain('Industry / workflow:')
+    data.set('industry','wholesale-distribution')
+    const brief=formatContactBrief(data)
+    expect(brief.industryLabel).toBe('B2B Wholesale & Distribution')
+    expect(brief.subject).toBe('New Project Brief from Example Person (B2B Wholesale & Distribution)')
+    expect(buildBriefClipboardText(data,'contact@samintelligencegroup.com')).toContain('To: contact@samintelligencegroup.com')
   })
 })
