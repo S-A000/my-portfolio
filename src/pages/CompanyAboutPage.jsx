@@ -11,20 +11,20 @@ const proofProjects = proofIds.map((id) => pastProjects.find((project) => projec
 
 const faqItems = [
   {
-    question: 'What does SAM Intelligence Group build?',
-    answer: 'SAM Intelligence Group designs and delivers production data engineering pipelines, MLOps systems, custom web and .NET software, and applied AI workflows with human review.',
+    question: 'What services does SAM Intelligence Group offer as a software house?',
+    answer: 'SAM Intelligence Group delivers four connected engineering services: Data Engineering & ETL (Python, SQL Server, PostgreSQL, BigQuery, SSIS), MLOps & Production AI (MLflow, Feast, chronological evaluation, FastAPI serving, GitHub Actions), Full-Stack Web & Custom Software (React, FastAPI, C#, .NET 10, ASP.NET Core MVC, EF Core, WPF), and Custom AI Solutions (PyTorch, OpenCV, YOLO computer vision, local Ollama/LangChain agents, and human-reviewed workflows).',
   },
   {
-    question: 'What industries do you serve?',
-    answer: 'We build operational systems for pharmacies and healthcare retail, e-commerce, B2B wholesale and distribution, manufacturing and industrial operations, logistics and supply chain, media and research publishing, and environmental monitoring.',
+    question: 'Does SAM Intelligence Group work with international clients globally?',
+    answer: 'Yes. SAM Intelligence Group operates as a global engineering partner serving clients worldwide across North America, Europe, the Middle East, Africa, and Asia-Pacific through a structured five-stage lifecycle: Discovery, Architecture, Build, Deployment, and Support & Iteration.',
   },
   {
-    question: 'What is your technology stack?',
-    answer: 'Our production stack includes Python, SQL Server, PostgreSQL, BigQuery, SSIS, MLflow, Feast, PyTorch, OpenCV, YOLO, MediaPipe, LangChain, Ollama, FastAPI, React, JavaScript, C#, .NET, ASP.NET Core MVC, EF Core, WPF, Docker, AWS, and GitHub Actions.',
+    question: 'What production AI, MLOps, and full-stack projects has SAM Intelligence Group delivered?',
+    answer: 'Documented builds include the Lobatse Pharmacy platform (.NET 10, ASP.NET Core MVC, EF Core, PostgreSQL on AWS RDS/EC2/S3 with 11,204 catalog rows processed), the Three-City AQI Forecasting MLOps Platform (105,054 hourly BigQuery rows, 606 ordered features, MLflow, FastAPI, Streamlit), DeepGuard multimodal deepfake video forensics (186 commits in PyTorch and OpenCV), the Industrial Print Proofing C#/WPF desktop suite, and the open-source SAM-EDA Python package on PyPI.',
   },
   {
-    question: 'How do I start a project with SAM Intelligence Group?',
-    answer: 'Share your current workflow, operational constraints, and target outcome through the project brief form on our contact section or email contact@samintelligencegroup.com directly.',
+    question: 'Who leads engineering at SAM Intelligence Group and how can we start a project?',
+    answer: 'Engineering at SAM Intelligence Group is led by Syed Abdullah Bin Masood, Lead AI/ML and Full-Stack Systems Engineer. To start a project, share your current workflow, data constraints, and target outcome via the project brief form at samintelligencegroup.com/#contact or email contact@samintelligencegroup.com directly.',
   },
 ]
 

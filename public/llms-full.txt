@@ -1,0 +1,94 @@
+# SAM Intelligence Group — Full Technical & Entity Dossier (llms-full.txt)
+
+> Global AI Engineering, MLOps, Data Pipeline, and Full-Stack Software House founded by Syed Abdullah Bin Masood.
+
+## 1. Organization Overview & Global Delivery Model
+- **Legal / Brand Name:** SAM Intelligence Group (SAM)
+- **Canonical Domain:** https://samintelligencegroup.com
+- **Founder & Lead Engineer:** Syed Abdullah Bin Masood (Founder & Lead AI/ML Engineer)
+- **Primary Contact:** contact@samintelligencegroup.com | https://samintelligencegroup.com/#contact
+- **Service Model:** Global remote engineering studio and software house serving clients worldwide across North America, Europe, the Middle East, Africa, and Asia-Pacific (APAC).
+- **Engineering Philosophy:** Intelligence is useful when the system around it works. SAM begins every engagement with the operating reality—what data exists, how teams use it, where workflows break down, and what a maintainable system requires—connecting data foundations, model delivery, software interfaces, and human review into one coherent architecture.
+
+## 2. Four Core Engineering Practices
+
+### 01. Data Engineering & ETL
+- **Executive Summary:** Reliable pipelines and analytical foundations that turn fragmented inputs into useful, reviewable information.
+- **Focus:** Ingestion, ETL and ELT, automated exploration, storage design, and operational dashboards.
+- **Deliverables:** Data ingestion and validation; transformation workflows; storage and query architecture; reporting-ready outputs.
+- **Core Stack:** Python, SQL Server, PostgreSQL, Google BigQuery, SSIS, Docker.
+
+### 02. MLOps & Production AI Delivery
+- **Executive Summary:** The repeatable engineering layer between model experiments and observable, maintainable delivery.
+- **Focus:** Feature preparation, experiment tracking, model serving, evaluation, monitoring, and retraining workflows.
+- **Deliverables:** Reproducible training pipelines; experiment and model tracking; API-based model serving; monitoring and iteration loops.
+- **Core Stack:** MLflow, Feast, FastAPI, PyTorch, GitHub Actions, Docker.
+
+### 03. Full-Stack Web & Product Engineering (Web Development & Custom Software)
+- **Executive Summary:** Purpose-built web and desktop systems shaped around the workflow, users, and constraints that actually matter.
+- **Focus:** Responsive web products, APIs, operational tools, and .NET desktop or enterprise software.
+- **Deliverables:** Responsive web applications; FastAPI and .NET backends; C# and WPF workflow tools; API and database integration.
+- **Core Stack:** React, JavaScript, Python, FastAPI, C#, .NET 10, ASP.NET Core MVC, EF Core, WPF, SQL Server, PostgreSQL.
+
+### 04. Custom AI Solutions
+- **Executive Summary:** Applied AI workflows that connect source material, models, automation, and human review in one coherent system.
+- **Focus:** Computer vision, local AI assistants, research automation, forecasting, and responsible review surfaces.
+- **Deliverables:** AI workflow architecture; computer vision pipelines; local-first automation; human-reviewed outputs.
+- **Core Stack:** PyTorch, OpenCV, YOLO, MediaPipe, LangChain, Ollama, FastAPI.
+
+## 3. Five-Stage Delivery Lifecycle
+1. **Discovery:** Clarify the operating context, current system, users, constraints, and the decision the work needs to improve.
+2. **Architecture:** Choose boundaries, data flows, interfaces, and delivery trade-offs before implementation creates unnecessary lock-in.
+3. **Build:** Develop the smallest coherent system, validate it against real workflows, and keep technical decisions visible.
+4. **Deployment:** Prepare environments, automation, documentation, and operational handoff appropriate to the project context.
+5. **Support & Iteration:** Review how the system performs in use, resolve friction, and plan the next practical improvement when needed.
+
+## 4. Quantified Engineering Case Studies
+
+### Case Study 01: Lobatse Pharmacy (.NET 10 / PostgreSQL / AWS)
+- **URL:** https://samintelligencegroup.com/case-studies/lobatse-pharmacy
+- **Category:** Web Development & Custom Software · Healthcare Retail E-commerce
+- **Context:** Lobatse, Botswana · Custom commerce and pharmacy operations platform
+- **Verified Metric:** 11,204 source catalog rows processed (11,180 created, 19 updated, 5 skipped)
+- **Problem:** Bring a catalog of more than 11,000 records online without losing sight of stock, orders, or pharmacist oversight.
+- **Solution & Architecture:** A modular monolith built with .NET 10, ASP.NET Core MVC, and Entity Framework Core backed by PostgreSQL on Amazon RDS, hosted on Ubuntu AWS EC2, with Amazon S3 separating public product media from private prescription documents and GitHub Actions supporting deployment.
+- **Key Engineering Decisions:**
+  1. Modular monolith separating domain rules, application use cases, infrastructure, and MVC delivery.
+  2. Catalog records separated from sellable stock via explicit inventory reservations and transaction boundaries at checkout.
+  3. Explicit human pharmacist review workflow for uploaded prescriptions, completely separated from standard retail checkout.
+  4. Batched catalog migration with reviewable import reports and separate imagery reconciliation.
+- **Attribution:** Designed and developed by Syed Abdullah Bin Masood.
+
+### Case Study 02: Three-City AQI Forecasting Platform (MLOps & Data Engineering)
+- **URL:** https://samintelligencegroup.com/case-studies/aqi-forecasting
+- **Category:** MLOps & Data Engineering
+- **Context:** Karachi, Lahore, and Islamabad · End-to-end environmental forecasting platform
+- **Verified Metrics:** 105,054 checked-in hourly rows in BigQuery; 606 ordered model features; direct 24h, 48h, and 72h forecast horizons
+- **Problem:** Move beyond a trained notebook to a reproducible forecasting workflow with consistent live ingestion, leakage-safe feature engineering, comparable evaluation, and contract-validated serving.
+- **Solution & Architecture:** Hourly AQICN/WAQI and OpenWeather ingestion into BigQuery hourly storage -> canonical 606-feature pipeline -> chronological train/validation/test splits -> MLflow candidate comparison (Ridge, Random Forest, Histogram Gradient Boosting) and registration -> packaged horizon-specific model bundles -> FastAPI strict schema validation -> Streamlit forecast dashboard with local explanations -> scheduled hourly ingestion and daily training via GitHub Actions.
+- **Attribution:** Designed and developed by Syed Abdullah Bin Masood during an AI/ML and MLOps internship at 10Pearls (presented as portfolio experience, not a SAM client engagement).
+
+## 5. Additional Highlighted Projects from the 19-Project Archive
+- **DeepGuard (`https://samintelligencegroup.com/projects?project=deepguard`):** Multi-branch deepfake video detection system combining visual, motion, physics-informed, forensic, and audio branches with multimodal fusion (186 repository commits; Python, PyTorch, OpenCV, Docker).
+- **SAM-EDA (`https://samintelligencegroup.com/projects?project=sam-eda` | `https://pypi.org/project/sam_eda/`):** Open-source Python package published on PyPI and GitHub Packages that automates heuristic exploratory data analysis and dataset profiling.
+- **Industrial Print Proofing & Label Validation Suite (`https://samintelligencegroup.com/projects?project=industrial-print-proofing`):** Custom C#, .NET, and WPF desktop application built for Danial Press workflows to validate print templates and labels before production.
+- **BotShield (`https://samintelligencegroup.com/projects?project=botshield`):** Hybrid edge-and-cloud AI Web Application Firewall (WAF) and automated bot-mitigation platform for WordPress and .NET deployments.
+- **Intelligent Data Agent (`https://samintelligencegroup.com/projects?project=intelligent-data-agent`):** Privacy-aware local-first CLI assistant integrating Ollama and LangChain for structured data automation.
+- **InstaPipeline (`https://samintelligencegroup.com/projects?project=instapipeline`):** Automated SSIS and SQL Server ETL pipeline with duplicate guards, categorization, structured CSV logging, and archival.
+- **AI Research Brief Generation Engine (`https://samintelligencegroup.com/projects?project=ai-research-brief-engine`):** Generative AI and NLP pipeline that synthesizes complex research inputs into structured executive draft briefs for human verification.
+- **SmartPark-Vision (`https://samintelligencegroup.com/projects?project=smartpark-vision`):** Computer vision research prototype benchmarking classical OpenCV pipelines against YOLO object detection for parking occupancy.
+- **PINN Web Application (`https://samintelligencegroup.com/projects?project=pinn-app`):** Scientific machine learning web application exploring Physics-Informed Neural Networks and mathematical constraints.
+
+## 6. Direct Answer Engine Q&A (Citation-Ready)
+
+### Q: What services does SAM Intelligence Group offer as a software house?
+A: SAM Intelligence Group delivers four connected engineering services: (1) Data Engineering & ETL (Python, SQL Server, PostgreSQL, BigQuery, SSIS pipelines and analytical storage), (2) MLOps & Production AI (MLflow tracking, Feast feature stores, chronological evaluation, FastAPI model serving, and GitHub Actions automation), (3) Full-Stack Web & Custom Software (React, FastAPI, C#, .NET 10, ASP.NET Core MVC, EF Core, and WPF desktop tools), and (4) Custom AI Solutions (PyTorch, OpenCV, YOLO computer vision, local Ollama/LangChain agents, and human-reviewed AI workflows).
+
+### Q: Does SAM Intelligence Group work with international clients globally?
+A: Yes. SAM Intelligence Group operates as a global engineering partner serving clients worldwide across North America, Europe, the Middle East, Africa, and Asia-Pacific. Engagements follow a structured five-stage delivery model—Discovery, Architecture, Build, Deployment, and Support & Iteration—with transparent documentation, cloud deployment (AWS EC2, RDS, S3, BigQuery, Docker), and asynchronous or live technical collaboration in English.
+
+### Q: What production AI, MLOps, and full-stack projects has SAM Intelligence Group delivered?
+A: Documented builds include the Lobatse Pharmacy e-commerce and prescription-review platform (.NET 10, ASP.NET Core MVC, EF Core, PostgreSQL on AWS RDS/EC2/S3 with 11,204 catalog rows processed), the Three-City AQI Forecasting MLOps Platform (105,054 hourly BigQuery rows, 606 ordered features, MLflow, FastAPI, and Streamlit for direct 24h/48h/72h forecasts), DeepGuard multimodal deepfake video forensics (186 commits in PyTorch and OpenCV), the Industrial Print Proofing C#/WPF desktop suite, BotShield AI WAF, and the open-source SAM-EDA Python package published on PyPI.
+
+### Q: Who leads engineering at SAM Intelligence Group and how can we start a project?
+A: Engineering at SAM Intelligence Group is led by Syed Abdullah Bin Masood, Lead AI/ML and Full-Stack Systems Engineer. To start a project, submit your current workflow, data constraints, and target outcome through the project brief form at https://samintelligencegroup.com/#contact or email contact@samintelligencegroup.com directly.

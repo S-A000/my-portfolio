@@ -82,7 +82,7 @@ describe('SAM Intelligence Group website', () => {
     expect(screen.getByText('PINN Web Application')).toBeInTheDocument()
     expect(document.querySelectorAll('.proof-strip__list > a')).toHaveLength(4)
     expect(document.querySelectorAll('.proof-strip__list > a > span')).toHaveLength(4)
-    expect(screen.getByRole('heading', { name: 'What does SAM Intelligence Group build?', level: 3 })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'What services does SAM Intelligence Group offer as a software house?', level: 3 })).toBeInTheDocument()
     expect(screen.queryByText(/founder/i)).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: /github/i })).not.toBeInTheDocument()
     expect(document.title).toBe('About Us | SAM Intelligence Group')

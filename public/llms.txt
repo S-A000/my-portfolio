@@ -1,63 +1,32 @@
 # SAM Intelligence Group
 
-> Engineering data platforms, MLOps systems, custom web and .NET software, and applied AI workflows.
+> Global AI Engineering, MLOps, Data Pipeline, and Full-Stack Software House founded by Syed Abdullah Bin Masood.
 
-## Entity Summary
-- **Organization:** SAM Intelligence Group
-- **Founder & Lead Engineer:** Syed Abdullah Bin Masood (Founder & AI/ML Engineer)
-- **Canonical Website:** https://samintelligencegroup.com
-- **Primary Contact:** contact@samintelligencegroup.com | https://samintelligencegroup.com/#contact
-- **Profiles:**
-  - GitHub: https://github.com/S-A000
-  - LinkedIn: https://www.linkedin.com/in/abdullah-bin-masood-0b25103b4/
+SAM Intelligence Group (`https://samintelligencegroup.com`) designs, builds, and deploys production data engineering pipelines, reproducible MLOps systems, custom web and .NET software platforms, and human-reviewed applied AI workflows for clients worldwide.
 
-## Core Engineering Services
-1. **Data Engineering & ETL**
-   - Reliable ingestion, validation, ETL/ELT transformation workflows, storage architecture, and reporting-ready analytical foundations.
-   - Stack: Python, SQL Server, PostgreSQL, BigQuery, SSIS, Docker.
-2. **MLOps & Production AI Delivery**
-   - Reproducible training pipelines, leakage-safe feature preparation, experiment and model tracking, API-based model serving, evaluation, monitoring, and retraining workflows.
-   - Stack: MLflow, Feast, FastAPI, PyTorch, GitHub Actions, Docker.
-3. **Full-Stack Web & Product Engineering (Web Development & Custom Software)**
-   - Purpose-built responsive web applications, FastAPI and .NET backends, C# and WPF desktop operator tools, and database integrations.
-   - Stack: React, JavaScript, Python, FastAPI, C#, .NET, ASP.NET Core MVC, EF Core, WPF, SQL Server, PostgreSQL.
-4. **Custom AI Solutions**
-   - Applied AI workflows connecting source material, computer vision, local LLM automation, forecasting, and explicit human review.
-   - Stack: PyTorch, OpenCV, YOLO, MediaPipe, LangChain, Ollama, FastAPI.
+## Core Services
+- [Data Engineering & ETL](https://samintelligencegroup.com/#services): Ingestion, validation, ETL/ELT transformation workflows, governed cloud/SQL storage (BigQuery, PostgreSQL, SQL Server, SSIS), and reporting-ready analytical foundations.
+- [MLOps & Production AI](https://samintelligencegroup.com/#services): Leakage-safe feature preparation, chronological evaluation, MLflow experiment tracking and model registry, FastAPI model serving, monitoring, and automated retraining loops.
+- [Full-Stack Web & Product Engineering](https://samintelligencegroup.com/#services): Responsive React and ASP.NET Core MVC web applications, FastAPI and .NET 10 backends, EF Core data layers, and C#/WPF desktop operator suites.
+- [Custom AI Solutions](https://samintelligencegroup.com/#services): Multimodal computer vision (PyTorch, OpenCV, YOLO, MediaPipe), local-first LLM agents (Ollama, LangChain), research synthesis pipelines, and explicit human-review interfaces.
 
-## Industries & Workflows Served
-- **Pharmacies & Healthcare Retail:** Searchable catalogs, stock-aware baskets, cash-on-delivery checkout, inventory administration, and separate pharmacist prescription review (`https://samintelligencegroup.com/industries#pharmacies-healthcare-retail`).
-- **Retail & E-commerce:** Responsive storefronts, catalog-import pipelines, image reconciliation, and order management (`https://samintelligencegroup.com/industries#retail-ecommerce`).
-- **B2B Wholesale & Distribution:** Account-based catalogs, quotation workflows, reorder portals, and spreadsheet/ERP ETL integration (`https://samintelligencegroup.com/industries#wholesale-distribution`).
-- **Manufacturing & Industrial Operations:** Desktop and web operator validation tools, template and label checks, and print-proofing workflows (`https://samintelligencegroup.com/industries#manufacturing-industrial`).
-- **Logistics & Supply Chain:** Order and dispatch workflow applications, event ingestion pipelines, and exception queues (`https://samintelligencegroup.com/industries#logistics-supply-chain`).
-- **Media, Research & Publishing:** Structured source ingestion, AI-assisted draft briefs, and human verification interfaces (`https://samintelligencegroup.com/industries#media-research-publishing`).
-- **Environmental Data & Smart Infrastructure:** Continuous telemetry ingestion, reproducible multi-horizon forecasting, and computer vision benchmarking (`https://samintelligencegroup.com/industries#environmental-smart-infrastructure`).
+## Global Industries Served
+- [Industries & Solutions Directory](https://samintelligencegroup.com/industries): Custom systems for Pharmacies & Healthcare Retail, Retail & E-commerce, B2B Wholesale & Distribution, Manufacturing & Industrial Operations, Logistics & Supply Chain, Media, Research & Publishing, and Environmental Data & Smart Infrastructure.
 
-## Verified Case Studies & Flagship Projects
-- **Three-City AQI Forecasting Platform (MLOps & Data Engineering):**
-  - URL: https://samintelligencegroup.com/case-studies/aqi-forecasting
-  - Summary: End-to-end MLOps platform turning hourly AQICN/WAQI and OpenWeather observations into direct 24h, 48h, and 72h air-quality forecasts for Karachi, Lahore, and Islamabad.
-  - Verified Metrics & Architecture: 105,054 checked-in hourly rows in BigQuery, canonical 606 ordered model features, chronological train/validation/test evaluation across Ridge, Random Forest, and Histogram Gradient Boosting, MLflow registration, strict FastAPI schema validation, Streamlit dashboard, and scheduled GitHub Actions automation.
-- **Lobatse Pharmacy (.NET 10 / PostgreSQL / AWS):**
-  - URL: https://samintelligencegroup.com/case-studies/lobatse-pharmacy
-  - Summary: Custom ASP.NET Core MVC and EF Core pharmacy e-commerce platform for Lobatse, Botswana, connecting a responsive storefront, stock-aware basket, cash-on-delivery checkout, catalog/inventory administration, and a separate authorized pharmacist prescription-review workflow.
-  - Verified Metrics & Architecture: 11,204 source catalog rows processed (11,180 created, 19 updated, 5 skipped) with separate imagery reconciliation; hosted on Ubuntu AWS EC2 with PostgreSQL on Amazon RDS and Amazon S3 for public media and private prescription documents.
-- **DeepGuard (Computer Vision & Multimodal AI):**
-  - URL: https://samintelligencegroup.com/projects?project=deepguard
-  - Summary: Multi-branch deepfake video detection research system combining visual, motion, physics-informed, forensic, and audio branches with multimodal fusion (186 repository commits, PyTorch, OpenCV, Docker).
-- **SAM-EDA (Open-Source Python Package on PyPI):**
-  - URL: https://samintelligencegroup.com/projects?project=sam-eda
-  - Package URL: https://pypi.org/project/sam_eda/
-  - Summary: Published open-source Python utility on PyPI that automates heuristic exploratory data analysis, dataset profiling, and diagnostic reporting.
-- **Industrial Print Proofing & Label Validation Suite:**
-  - URL: https://samintelligencegroup.com/projects?project=industrial-print-proofing
-  - Summary: Custom C#, .NET, and WPF desktop software built for Danial Press workflows to validate templates and labels prior to industrial print production.
+## Verified Case Studies
+- [Case Studies Overview](https://samintelligencegroup.com/case-studies): Deep-dive architectural walkthroughs and verified implementation outcomes.
+- [Three-City AQI Forecasting Platform](https://samintelligencegroup.com/case-studies/aqi-forecasting): End-to-end MLOps system processing 105,054 checked-in hourly rows across Karachi, Lahore, and Islamabad with a 606-feature contract, chronological evaluation (Ridge, Random Forest, Histogram Gradient Boosting), MLflow registry, FastAPI serving, Streamlit dashboard, and GitHub Actions automation.
+- [Lobatse Pharmacy Platform](https://samintelligencegroup.com/case-studies/lobatse-pharmacy): Custom .NET 10 / ASP.NET Core MVC / EF Core pharmacy e-commerce and operations platform on AWS (EC2, RDS PostgreSQL, S3), connecting customer shopping, stock-aware baskets, COD checkout, and separate authorized pharmacist prescription review across 11,204 processed source catalog rows.
+- [DeepGuard Multimodal Forensics](https://samintelligencegroup.com/projects?project=deepguard): Multi-branch deepfake video detection architecture combining visual, motion, physics-informed, forensic, and audio branches (186 commits, PyTorch, OpenCV, Docker).
+- [SAM-EDA Open-Source Python Package](https://pypi.org/project/sam_eda/): Published PyPI library automating heuristic exploratory data analysis and dataset diagnostics.
 
-## Key Pages
-- Homepage: https://samintelligencegroup.com/
-- Industries & Solutions: https://samintelligencegroup.com/industries
-- Case Studies Index: https://samintelligencegroup.com/case-studies
-- Full Project Archive (18 Projects): https://samintelligencegroup.com/projects
-- About SAM Intelligence Group: https://samintelligencegroup.com/about
-- Start a Project Brief: https://samintelligencegroup.com/#contact
+## Technical Stack & Full Archive
+- [Work & Projects Archive (19 Documented Builds)](https://samintelligencegroup.com/projects): Filterable archive of production platforms, desktop software, security systems, and AI research prototypes.
+- [About SAM Intelligence Group](https://samintelligencegroup.com/about): Engineering methodology, 5-stage delivery lifecycle (Discovery, Architecture, Build, Deployment, Support & Iteration), and FAQ.
+- [Full AI & LLM Reference Dossier](https://samintelligencegroup.com/llms-full.txt): Complete plain-text specification of services, case study metrics, architecture flows, and Q&A.
+
+## Contact & Project Intake
+- **Email:** contact@samintelligencegroup.com
+- **Project Brief Portal:** https://samintelligencegroup.com/#contact
+- **GitHub:** https://github.com/S-A000
+- **LinkedIn:** https://www.linkedin.com/in/abdullah-bin-masood-0b25103b4/
