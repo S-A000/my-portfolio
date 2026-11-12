@@ -23,6 +23,7 @@ const iconTypes = {
   docker: 'docker',
   'github-actions': 'githubactions',
   'asp-net-core-mvc': 'dotnet',
+  'aspdotnet-core-mvc': 'dotnet',
   'ef-core': 'dotnet',
   streamlit: 'streamlit',
   'amazon-rds': 'rds',

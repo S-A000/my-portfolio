@@ -9,9 +9,27 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState('home')
   const [menuOpen, setMenuOpen] = useState(false)
+  const [compactNav, setCompactNav] = useState(() => (
+    typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+      ? window.matchMedia('(max-width: 1120px)').matches
+      : false
+  ))
   const menuButtonRef = useRef(null)
   const navRef = useRef(null)
   const path = normalizePath(window.location.pathname)
+  const isDrawerHidden = compactNav && !menuOpen
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return undefined
+    const mediaQuery = window.matchMedia('(max-width: 1120px)')
+    const handleChange = (event) => {
+      setCompactNav(event.matches)
+      if (!event.matches) setMenuOpen(false)
+    }
+    setCompactNav(mediaQuery.matches)
+    mediaQuery.addEventListener('change', handleChange)
+    return () => mediaQuery.removeEventListener('change', handleChange)
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 16)
@@ -57,6 +75,7 @@ export default function Navbar() {
   }, [menuOpen])
 
   const isActive = (item) => {
+    if (item.route === '/') return path === '/' && activeSection === 'home'
     if (item.route && (normalizePath(item.route) === path || (item.route === '/case-studies' && path.startsWith('/case-studies/')))) return true
     return path === '/' && item.section === activeSection
   }
@@ -74,6 +93,8 @@ export default function Navbar() {
           id="primary-navigation"
           className={`site-header__nav${menuOpen ? ' site-header__nav--open' : ''}`}
           aria-label="Primary navigation"
+          aria-hidden={isDrawerHidden ? 'true' : undefined}
+          inert={isDrawerHidden || undefined}
         >
           {navigation.map((item) => (
             <a

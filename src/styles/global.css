@@ -1878,7 +1878,8 @@ main {
   text-transform: uppercase;
 }
 
-.project-card__body h2 {
+.project-card__body h2,
+.project-card__body h3 {
   margin-bottom: 16px;
   font-size: 1.55rem;
 }

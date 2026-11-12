@@ -25,10 +25,10 @@ export default function ProjectsPage() {
         <div className="page-hero__signal" aria-hidden="true"><i /><i /><i /><i /></div>
       </section>
       <ProjectLibrary />
-      <section className="page-cta section">
+      <section className="page-cta section" aria-labelledby="projects-cta-title">
         <div className="page-cta__inner shell">
           <p className="eyebrow"><span /> Your context is different</p>
-          <h2>Use the portfolio as evidence, not a one-size-fits-all package.</h2>
+          <h2 id="projects-cta-title">Use the portfolio as evidence, not a one-size-fits-all package.</h2>
           <p>Share the workflow, data, and constraints behind the system you need.</p>
           <a className="button button--primary" href="/#contact">Start a project brief <ArrowRight aria-hidden="true" /></a>
         </div>

@@ -14,7 +14,7 @@ describe('Case studies',()=>{
     expect(nav.getAllByRole('link').map(a=>a.textContent)).toEqual(['Home','Services','Industries','Case Studies','Work / Projects','About Us','Contact'])
     const links=screen.getAllByRole('link',{name:'Read case study'})
     expect(links.map(a=>a.getAttribute('href'))).toEqual(['/case-studies/lobatse-pharmacy','/case-studies/aqi-forecasting'])
-    expect(document.head.querySelector('link[rel=canonical]')).toHaveAttribute('href','https://my-portfolio-nine-nu-52.vercel.app/case-studies')
+    expect(document.head.querySelector('link[rel=canonical]')).toHaveAttribute('href','https://samintelligencegroup.com/case-studies')
   })
   it.each(caseStudies)('loads $name directly with attribution, verified facts and a useful WebGL fallback',study=>{
     route(`/case-studies/${study.id}`)
@@ -25,7 +25,7 @@ describe('Case studies',()=>{
     expect(document.querySelectorAll('.scene-canvas-host>[data-fallback=true]')).toHaveLength(2)
     expect(screen.getByRole('link',{name:'Read the next case study'})).toHaveAttribute('href',`/case-studies/${caseStudies.find(s=>s.id!==study.id).id}`)
     expect(document.title).toContain(study.name)
-    expect(document.head.querySelector('meta[property="og:image"]')).toHaveAttribute('content',`https://my-portfolio-nine-nu-52.vercel.app/case-studies/social-${study.id}.png`)
+    expect(document.head.querySelector('meta[property="og:image"]')).toHaveAttribute('content',`https://samintelligencegroup.com/case-studies/social-${study.id}.png`)
   })
   it('supports all five manual stages, arrow keys, Home/End and reduced-motion reset',async()=>{
     const user=userEvent.setup()

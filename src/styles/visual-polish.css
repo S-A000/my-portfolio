@@ -1,5 +1,4 @@
 /* Focused surface/scale refinements. Scene choreography and routing are unchanged. */
-.site-shell { background:radial-gradient(ellipse at 95% 8%,#0b2530 0,transparent 42rem),radial-gradient(ellipse at 0 55%,#0a202b 0,transparent 60rem),#061018; }
 .hero::before { background:none; }
 .hero,.service-showcase,.industries-preview,.selected-cases { border:0;background-color:transparent; }
 .hero__inner { grid-template-rows:1fr;padding-top:calc(var(--header-height) + 30px);padding-bottom:65px; }
@@ -8,7 +7,7 @@
 .hero__focus { margin-bottom:0; }
 .service-showcase.section,.industries-preview.section,.selected-cases.section { padding-block:75px; }
 .service-showcase__header,.industries-preview .section-intro,.selected-cases .section-intro { margin-bottom:36px;gap:50px; }
-.service-showcase__header h2,.industries-preview .section-intro h2,.selected-cases .section-intro h2 { font-size:clamp(30px,3.5vw,48px);line-height:1.15; }
+.service-showcase__header h2,.industries-preview .section-intro h2,.selected-cases .section-intro h2,.company-preview__copy h2 { font-size:clamp(30px,3.5vw,48px);line-height:1.15; }
 .service-showcase__frame { border:0;background:none;box-shadow:none; }
 .service-showcase__tabs { border-bottom:1px solid var(--line);gap:12px; }
 .service-showcase__tabs button { display:flex;min-height:56px;padding:12px 10px;border:0;border-radius:0;background:none; }

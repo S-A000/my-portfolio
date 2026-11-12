@@ -27,7 +27,7 @@ describe('Industries and solutions',()=>{
       }
     }
     expect(document.title).toBe('Industries & Solutions | SAM Intelligence Group')
-    expect(document.head.querySelector('link[rel=canonical]')).toHaveAttribute('href','https://my-portfolio-nine-nu-52.vercel.app/industries')
+    expect(document.head.querySelector('link[rel=canonical]')).toHaveAttribute('href','https://samintelligencegroup.com/industries')
   })
   it('preserves evidence boundaries and uses only existing project and case-study links',()=>{
     route('/industries')

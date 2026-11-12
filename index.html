@@ -10,12 +10,14 @@
     <meta property="og:site_name" content="SAM Intelligence Group" />
     <meta property="og:title" content="SAM Intelligence Group | Data, MLOps, Custom Software &amp; AI" />
     <meta property="og:description" content="Engineering data, intelligent systems, and custom software." />
-    <meta property="og:image" content="/social-preview.png" />
+    <meta property="og:url" content="https://samintelligencegroup.com/" />
+    <meta property="og:image" content="https://samintelligencegroup.com/social-preview.png" />
     <meta property="og:image:alt" content="SAM Intelligence Group — engineering the systems behind the next decision" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="SAM Intelligence Group | Data, MLOps, Custom Software &amp; AI" />
     <meta name="twitter:description" content="Engineering data, intelligent systems, and custom software." />
-    <meta name="twitter:image" content="/social-preview.png" />
+    <meta name="twitter:image" content="https://samintelligencegroup.com/social-preview.png" />
+    <link rel="canonical" href="https://samintelligencegroup.com/" />
     <link rel="icon" href="/favicon.png" type="image/png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -24,17 +26,101 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "SAM Intelligence Group",
-        "description": "Engineering company for data platforms, MLOps systems, applied AI workflows, and custom software.",
-        "email": "contact@samintelligencegroup.com",
-        "url": "https://my-portfolio-nine-nu-52.vercel.app/",
-        "knowsAbout": [
-          "Applied Artificial Intelligence",
-          "MLOps",
-          "Data Engineering",
-          "Custom Software",
-          ".NET"
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://samintelligencegroup.com/#organization",
+            "name": "SAM Intelligence Group",
+            "url": "https://samintelligencegroup.com",
+            "logo": "https://samintelligencegroup.com/sam-logo-full.png",
+            "description": "Engineering company for data platforms, MLOps systems, applied AI workflows, and custom software.",
+            "email": "contact@samintelligencegroup.com",
+            "founder": {
+              "@type": "Person",
+              "@id": "https://samintelligencegroup.com/#founder"
+            },
+            "sameAs": [
+              "https://github.com/S-A000",
+              "https://www.linkedin.com/in/abdullah-bin-masood-0b25103b4/"
+            ],
+            "knowsAbout": [
+              "Applied Artificial Intelligence",
+              "MLOps",
+              "Data Engineering",
+              "Custom Software",
+              ".NET"
+            ]
+          },
+          {
+            "@type": "Person",
+            "@id": "https://samintelligencegroup.com/#founder",
+            "name": "Syed Abdullah Bin Masood",
+            "jobTitle": "Founder & AI/ML Engineer",
+            "worksFor": {
+              "@id": "https://samintelligencegroup.com/#organization"
+            },
+            "knowsAbout": [
+              "Machine Learning",
+              "MLOps",
+              "Data Engineering",
+              "FastAPI",
+              "PyTorch",
+              ".NET",
+              "React",
+              "Three.js"
+            ],
+            "sameAs": [
+              "https://github.com/S-A000",
+              "https://www.linkedin.com/in/abdullah-bin-masood-0b25103b4/"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://samintelligencegroup.com/#website",
+            "name": "SAM Intelligence Group",
+            "url": "https://samintelligencegroup.com",
+            "publisher": {
+              "@id": "https://samintelligencegroup.com/#organization"
+            }
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://samintelligencegroup.com/#faq",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "What does SAM Intelligence Group build?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "SAM Intelligence Group designs and delivers production data engineering pipelines, MLOps systems, custom web and .NET software, and applied AI workflows with human review."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What industries do you serve?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "We build operational systems for pharmacies and healthcare retail, e-commerce, B2B wholesale and distribution, manufacturing and industrial operations, logistics and supply chain, media and research publishing, and environmental monitoring."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What is your technology stack?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Our production stack includes Python, SQL Server, PostgreSQL, BigQuery, SSIS, MLflow, Feast, PyTorch, OpenCV, YOLO, MediaPipe, LangChain, Ollama, FastAPI, React, JavaScript, C#, .NET, ASP.NET Core MVC, EF Core, WPF, Docker, AWS (EC2, RDS, S3), and GitHub Actions."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How do I start a project with SAM Intelligence Group?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Submit your current workflow, operational constraints, and target outcome through the project brief form at https://samintelligencegroup.com/#contact or email contact@samintelligencegroup.com directly."
+                }
+              }
+            ]
+          }
         ]
       }
     </script>

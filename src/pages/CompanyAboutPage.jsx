@@ -6,16 +6,50 @@ import { aboutUs, brand, servicePillars, technologyGroups } from '../data/agency
 import { pastProjects } from '../data/projectsData'
 import usePageMeta from '../hooks/usePageMeta'
 
-const proofIds = ['aqi-forecasting', 'industrial-print-proofing', 'sam-eda', 'pinn-web-app']
+const proofIds = ['aqi-forecasting', 'industrial-print-proofing', 'sam-eda', 'pinn-app']
 const proofProjects = proofIds.map((id) => pastProjects.find((project) => project.id === id)).filter(Boolean)
+
+const faqItems = [
+  {
+    question: 'What does SAM Intelligence Group build?',
+    answer: 'SAM Intelligence Group designs and delivers production data engineering pipelines, MLOps systems, custom web and .NET software, and applied AI workflows with human review.',
+  },
+  {
+    question: 'What industries do you serve?',
+    answer: 'We build operational systems for pharmacies and healthcare retail, e-commerce, B2B wholesale and distribution, manufacturing and industrial operations, logistics and supply chain, media and research publishing, and environmental monitoring.',
+  },
+  {
+    question: 'What is your technology stack?',
+    answer: 'Our production stack includes Python, SQL Server, PostgreSQL, BigQuery, SSIS, MLflow, Feast, PyTorch, OpenCV, YOLO, MediaPipe, LangChain, Ollama, FastAPI, React, JavaScript, C#, .NET, ASP.NET Core MVC, EF Core, WPF, Docker, AWS, and GitHub Actions.',
+  },
+  {
+    question: 'How do I start a project with SAM Intelligence Group?',
+    answer: 'Share your current workflow, operational constraints, and target outcome through the project brief form on our contact section or email contact@samintelligencegroup.com directly.',
+  },
+]
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqItems.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: item.answer,
+    },
+  })),
+}
 
 export default function CompanyAboutPage() {
   usePageMeta({
     title: 'About Us | SAM Intelligence Group',
     description: 'Learn how SAM Intelligence Group delivers data engineering, MLOps, custom software, and applied AI projects.',
+    path: '/about',
   })
 
   return <div className="about-page">
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
     <section className="page-hero page-hero--about" aria-labelledby="about-page-title">
       <div className="page-hero__grid shell">
         <div><div className="about-brand-lockup"><img src={samLogo} alt="" width="180" height="127" /><span>{brand.name}</span></div><p className="eyebrow"><span /> About SAM Intelligence Group</p><h1 id="about-page-title">Intelligence is useful when the system around it works.</h1></div>
@@ -38,9 +72,14 @@ export default function CompanyAboutPage() {
 
     <section className="proof-strip section" aria-labelledby="proof-strip-title"><div className="shell">
       <header className="section-intro section-intro--split"><div><p className="eyebrow"><span /> Real project proof</p><h2 id="proof-strip-title">Working systems, tools, prototypes, and research.</h2></div><a className="text-link" href="/projects">Open the full project library <ArrowRight aria-hidden="true" /></a></header>
-      <div className="proof-strip__list">{proofProjects.map((project) => <a href={`/projects?project=${project.id}`} key={project.id}><div><strong>{project.title}</strong><small>{project.category}</small></div><em>{project.status}</em><ArrowRight aria-hidden="true" /></a>)}</div>
+      <div className="proof-strip__list">{proofProjects.map((project, index) => <a href={`/projects?project=${project.id}`} key={project.id}><span>{String(index + 1).padStart(2, '0')}</span><div><strong>{project.title}</strong><small>{project.category}</small></div><em>{project.status}</em><ArrowRight aria-hidden="true" /></a>)}</div>
     </div></section>
 
-    <section className="page-cta section"><div className="page-cta__inner shell"><div className="page-cta__brand"><img src={samLogo} alt="" width="120" height="84" /><span>{brand.name}</span></div><p className="eyebrow"><span /> Start with the constraint</p><h2>Have a system that needs a clearer next move?</h2><p>Share the current state, operational context, and outcome that needs to change.</p><a className="button button--primary" href="/#contact">Discuss a project <ArrowRight aria-hidden="true" /></a></div></section>
+    <section className="about-faq section" aria-labelledby="about-faq-title"><div className="shell">
+      <header className="section-intro section-intro--split"><div><p className="eyebrow"><span /> Frequently asked questions</p><h2 id="about-faq-title">Clear answers on scope, stack, and delivery.</h2></div><p>Direct answers for engineering leaders, operations teams, and partners evaluating how SAM Intelligence Group works.</p></header>
+      <div className="company-services__grid about-faq__grid">{faqItems.map((item) => <article key={item.question}><h3>{item.question}</h3><p>{item.answer}</p></article>)}</div>
+    </div></section>
+
+    <section className="page-cta section" aria-labelledby="about-cta-title"><div className="page-cta__inner shell"><div className="page-cta__brand"><img src={samLogo} alt="" width="120" height="84" /><span>{brand.name}</span></div><p className="eyebrow"><span /> Start with the constraint</p><h2 id="about-cta-title">Have a system that needs a clearer next move?</h2><p>Share the current state, operational context, and outcome that needs to change.</p><a className="button button--primary" href="/#contact">Discuss a project <ArrowRight aria-hidden="true" /></a></div></section>
   </div>
 }

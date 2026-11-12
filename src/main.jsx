@@ -6,7 +6,6 @@ import './styles/service-showcase.css'
 import './styles/corrections.css'
 import './styles/case-studies.css'
 import './styles/industries.css'
+import './styles/visual-polish.css'
 
 createRoot(document.getElementById('root')).render(<StrictMode><App /></StrictMode>)
-
-import './styles/visual-polish.css'

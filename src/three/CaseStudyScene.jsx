@@ -118,11 +118,11 @@ function Forecast({stage}) {
 }
 
 function AnimatedStage({active,children,index,variant}) {
-  const ref=useRef(),runtime=useSceneRuntime(),time=useRef(0)
+  const ref=useRef(),runtime=useSceneRuntime(),time=useRef(0),targetScale=useMemo(()=>new THREE.Vector3(),[])
   useFrame((_,dt)=>{const obj=ref.current;if(!obj)return
     if(runtime.running)time.current+=Math.min(dt,.05)
     const target=active?1:.001, blend=runtime.reducedMotion?1:1-Math.exp(-Math.min(dt,.05)*7)
-    obj.scale.lerp(new THREE.Vector3(target,target,target),blend)
+    obj.scale.lerp(targetScale.set(target,target,target),blend)
     obj.visible=obj.scale.x>.005
     obj.position.x=THREE.MathUtils.lerp(obj.position.x,active?0:(variant==='aqi-forecasting'?-3:3),blend)
     obj.rotation.y=runtime.reducedMotion?0:Math.sin(time.current*.24+index)*.045
@@ -132,12 +132,12 @@ function AnimatedStage({active,children,index,variant}) {
 }
 
 function World({variant,stage,onReady}) {
-  const {camera,size,invalidate}=useThree(),runtime=useSceneRuntime(),sweep=useRef(),time=useRef(0),reported=useRef(false)
+  const {camera,size,invalidate}=useThree(),runtime=useSceneRuntime(),sweep=useRef(),time=useRef(0),reported=useRef(false),aim=useMemo(()=>new THREE.Vector3(),[])
   useEffect(()=>{invalidate()},[stage,invalidate])
   useFrame((_,dt)=>{
     if(!reported.current){reported.current=true;onReady()}
     const aspect=size.width/Math.max(1,size.height), distance=(variant==='aqi-forecasting'?8.8:8.7)*[1.02,.94,1.02,1.13,1.16][stage]/Math.min(aspect,1.3)
-    const aim=new THREE.Vector3(variant==='aqi-forecasting'?[-.6,.6,-.4,.7,0][stage]:[.6,-.5,.55,0,.7][stage],variant==='aqi-forecasting'?.8:.35,distance)
+    aim.set(variant==='aqi-forecasting'?[-.6,.6,-.4,.7,0][stage]:[.6,-.5,.55,0,.7][stage],variant==='aqi-forecasting'?.8:.35,distance)
     camera.position.lerp(aim,runtime.reducedMotion?1:1-Math.exp(-Math.min(dt,.05)*3));camera.lookAt(0,0,0)
     if(runtime.running)time.current+=Math.min(dt,.05)
     if(sweep.current)sweep.current.position.x=Math.sin(time.current*.45)*4

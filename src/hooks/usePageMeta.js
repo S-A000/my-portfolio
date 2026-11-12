@@ -23,7 +23,7 @@ export default function usePageMeta({ title, description, path = window.location
     setMeta('meta[property="og:description"]', description)
     setMeta('meta[name="twitter:title"]', title)
     setMeta('meta[name="twitter:description"]', description)
-    const origin = 'https://my-portfolio-nine-nu-52.vercel.app'
+    const origin = 'https://samintelligencegroup.com'
     const url = origin + (path.replace(/\/+$/, '') || '/')
     let canonical = document.head.querySelector('link[rel="canonical"]')
     if (!canonical) { canonical = document.createElement('link'); canonical.rel = 'canonical'; document.head.appendChild(canonical) }

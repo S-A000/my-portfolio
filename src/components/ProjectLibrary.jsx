@@ -98,7 +98,7 @@ function ProjectCard({ project, index, onOpen }) {
       </div>
       <div className="project-card__body">
         <p>{project.category}</p>
-        <h2>{project.title}</h2>
+        <h3>{project.title}</h3>
         <p className="project-card__summary">{project.summary}</p>
         <ul aria-label={`Technology used for ${project.title}`}>
           {project.tech.slice(0, 4).map((item) => <li key={item}><TechnologyBadge name={item} compact /></li>)}

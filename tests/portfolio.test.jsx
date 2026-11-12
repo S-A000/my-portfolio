@@ -56,14 +56,14 @@ describe('SAM Intelligence Group website', () => {
     renderRoute('/projects')
     expect(screen.getByRole('status')).toHaveTextContent(`${pastProjects.length} projects shown`)
     pastProjects.forEach((project) => {
-      expect(screen.getByRole('heading', { name: project.title, level: 2 })).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: project.title, level: 3 })).toBeInTheDocument()
     })
 
     await user.click(screen.getByRole('button', { name: 'MLOps & Data' }))
-    expect(screen.getByRole('heading', { name: 'AQI Forecasting MLOps Platform', level: 2 })).toBeInTheDocument()
-    expect(screen.queryByRole('heading', { name: 'Industrial Print Proofing & Label Validation Suite', level: 2 })).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'AQI Forecasting MLOps Platform', level: 3 })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Industrial Print Proofing & Label Validation Suite', level: 3 })).not.toBeInTheDocument()
 
-    const aqiCard = screen.getByRole('heading', { name: 'AQI Forecasting MLOps Platform', level: 2 }).closest('article')
+    const aqiCard = screen.getByRole('heading', { name: 'AQI Forecasting MLOps Platform', level: 3 }).closest('article')
     await user.click(within(aqiCard).getByRole('button', { name: /view details/i }))
     const dialog = screen.getByRole('dialog')
     expect(dialog).toBeInTheDocument()
@@ -79,9 +79,14 @@ describe('SAM Intelligence Group website', () => {
     expect(screen.getByRole('heading', { name: 'MLOps', level: 3 })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Web Development & Custom Software', level: 3 })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'AI Solutions', level: 3 })).toBeInTheDocument()
+    expect(screen.getByText('PINN Web Application')).toBeInTheDocument()
+    expect(document.querySelectorAll('.proof-strip__list > a')).toHaveLength(4)
+    expect(document.querySelectorAll('.proof-strip__list > a > span')).toHaveLength(4)
+    expect(screen.getByRole('heading', { name: 'What does SAM Intelligence Group build?', level: 3 })).toBeInTheDocument()
     expect(screen.queryByText(/founder/i)).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: /github/i })).not.toBeInTheDocument()
     expect(document.title).toBe('About Us | SAM Intelligence Group')
+    expect(document.head.querySelector('link[rel=canonical]')).toHaveAttribute('href', 'https://samintelligencegroup.com/about')
   })
 
   afterEach(() => {
